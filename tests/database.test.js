@@ -7,7 +7,6 @@ const table = 'users'
 
 const dummyData = {
     id: 'f85cb688-701d-4c64-9087-42d62c8e0fcd',
-    email: 'dummyuser@dummyuser.com',
     username: 'dummy.user',
     display_name: 'Dummy User',
     description: 'This is my dummy description',
@@ -40,7 +39,6 @@ describe('Database', () => {
     it("should insert data", async () => {
         const newData = {
             id: 'f7135fcc-a979-4df1-8164-ffd0fb68a557',
-            email: 'dummyuser2@dummyuser.com',
             username: 'dummy.user.2',
             display_name: 'Dummy User 2',
             description: 'This is my dummy description',

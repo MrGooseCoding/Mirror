@@ -27,16 +27,6 @@ class userValidator extends Validator {
         )
     }
 
-    async email_valid () {
-        return (
-            this.not_null("email") &&
-            this.of_type("email", String) &&
-            this.max_length("email", 254) &&
-            this.follows_regex("email", email_regex) && 
-            await this.unique("email")
-        )
-    }
-
     async username_valid () {
         return (
             this.not_null("username") &&
@@ -104,7 +94,6 @@ class userValidator extends Validator {
     /** Combines individual validations to perform an overall validation. This method determines `data_valid` attribute */
     async validate_all() {
         const id_valid = this.id_valid()
-        const email_valid = await this.email_valid()
         const username_valid = await this.username_valid()
         const password_valid = await this.password_valid()
         const display_name_valid = this.display_name_valid()
@@ -116,7 +105,6 @@ class userValidator extends Validator {
 
         this.data_valid = 
             id_valid &&
-            email_valid && 
             username_valid &&
             password_valid && 
             display_name_valid && 
@@ -135,10 +123,6 @@ class userValidator extends Validator {
 
         if ( this.data["username"] ) {
             this.data["username"] = this.data["username"].toLowerCase()
-        }
-
-        if ( this.data["email"] ) {
-            this.data["email"] = this.data["email"].toLowerCase()
         }
     }
 
