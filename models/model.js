@@ -7,10 +7,12 @@ class Model {
         this.table = table
     }
 
-    static async _create (data) {
+    static async _create (data, use_id=true) {
         const db = database.open()
 
-        data.id = generate_uuid()
+        const insert_id = (data) => data.id = generate_uuid()
+        
+        use_id && insert_id(data)
 
         await database.insert(db, this.table, data).then(data => data)
         return new this(data)

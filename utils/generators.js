@@ -4,7 +4,7 @@ const bcrypt = require('bcrypt');
 const encript_SaltRounds = 10
 const validation_code_length = 6
 
-function generate_validation_code() {
+function generate_code() {
     return Math.floor(100000 + Math.random() * 900000)
 }
 
@@ -24,4 +24,4 @@ function generate_hash (value) {
     });
 }
 
-module.exports = {generate_validation_code, generate_uuid, generate_date_string, generate_hash}
+module.exports = {generate_code, generate_uuid, generate_date_string, generate_hash}

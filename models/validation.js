@@ -1,6 +1,6 @@
 const Model = require('./model')
 const User = require('./user')
-const { generate_validation_code, generate_date_string } = require('./../utils/generators');
+const { generate_code, generate_date_string } = require('./../utils/generators');
 
 class Validation extends Model{
     static name = "Validation"
@@ -14,7 +14,7 @@ class Validation extends Model{
         const data = {}
         data.type=type
         data.user=user.json().id
-        data.code = generate_validation_code()
+        data.code = generate_code()
         let currentDate = new Date();
         let expireDate = new Date(currentDate.setMinutes(currentDate.getMinutes() + 15))
         data.expire_date = generate_date_string(expireDate) // 15 minutes
