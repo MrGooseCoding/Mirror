@@ -27,7 +27,7 @@ api('/join/:code/', async (req, res, validator, user) => {
     }
 
     const room = await Room.objects_getBy('code', code)
-
+    
     if (room['error']) {
         return res.status(400).json({ error: "Room does not exist" })
     }
@@ -45,6 +45,19 @@ api('/join/:code/', async (req, res, validator, user) => {
     await room.addMember(user)
     
     return res.status(201).json(room.json())
+}, router, basicValidator, true)
+
+api('/leave/', async (req, res, validator, user) => {
+    const in_party = await RoomMember.in_party(user)
+    if (!in_party) {
+        return res.status(400).json({ error: "Not in party"})
+    }
+    
+    const room = await Room.objects_getBy('user', user.json().id)
+
+    await room.removeMember(user)
+    
+    return res.status(201).json({ status: `Leaved room with id ${room.json().id}` })
 }, router, basicValidator, true)
 
 module.exports = router
