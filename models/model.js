@@ -71,7 +71,7 @@ class Model {
     }
 
     async delete () {
-        await this.objects_deleteBy("id", this.data.id)
+        await Model.objects_deleteBy("id", this.data.id)
     }
 
     json () {

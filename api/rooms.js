@@ -53,11 +53,9 @@ api('/leave/', async (req, res, validator, user) => {
         return res.status(400).json({ error: "Not in party"})
     }
     
-    const room = await Room.objects_getBy('user', user.json().id)
-
-    await room.removeMember(user)
+    await RoomMember.objects_deleteBy('user', user.json().id)
     
-    return res.status(201).json({ status: `Leaved room with id ${room.json().id}` })
+    return res.status(201).json({ status: `Exited room` })
 }, router, basicValidator, true)
 
 module.exports = router

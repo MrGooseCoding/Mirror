@@ -36,10 +36,6 @@ class Room extends Model {
         })
     }
 
-    async removeMember (member) {
-        await RoomMember.objects_deleteBy('user', member.json().id) 
-    }
-
     async getMembers () {
         return await RoomMember.objects_searchBy('room', this.json().id, 20)
     }
