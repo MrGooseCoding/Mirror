@@ -113,11 +113,13 @@ class Validator {
 
         const type_name = type.name.toLowerCase()
 
-        const isInstance = typeof attrValue === type_name || attrValue instanceof type
+        const isInstance = typeof attrValue == type_name || attrValue instanceof type
 
         const isNull = !Boolean(attrValue)
 
         const valid = isNull || isInstance
+
+        console.log(isNull, isInstance, typeof attrValue === type_name, typeof attrValue)
 
         if (!valid) {
             this.errors[attrName] = `${attrName} is not an instance of ${type_name}`

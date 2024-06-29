@@ -27,10 +27,10 @@ class Room extends Model {
         return room
     }
 
-    async addMember (memberData) {
+    async addMember (member) {
         await RoomMember.create({
             room: this,
-            user: memberData,
+            user: member,
             type: "participant",
             voted: ""
         })
@@ -38,6 +38,10 @@ class Room extends Model {
 
     async getMembers () {
         return await RoomMember.objects_searchBy('room', this.json().id, 20)
+    }
+
+    async getMemberCount () {
+        return await this.getMembers().length
     }
 }
 
