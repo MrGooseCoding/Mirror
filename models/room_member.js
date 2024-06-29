@@ -21,7 +21,6 @@ class RoomMember extends Model {
 
     static async in_party(user) {
         const data = await RoomMember.objects_getBy('user', user.json().id)
-        console.log(data)
         return !data.error
     }
 }

@@ -8,7 +8,6 @@ class Room extends Model {
 
     constructor (data = {}) {
         super(data, 'rooms')
-        this.data.members = []
     }
 
     static async create(admin) {
@@ -29,13 +28,16 @@ class Room extends Model {
     }
 
     async addMember (memberData) {
-        this.data.members.push(memberData)
         await RoomMember.create({
             room: this,
             user: memberData,
             type: "participant",
             voted: ""
         })
+    }
+
+    async getMembers () {
+        return await RoomMember.objects_searchBy('room', this.json().id, 20)
     }
 }
 
