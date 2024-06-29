@@ -1,7 +1,7 @@
 const WebSocket = require('ws')
 
 class WebSocketRouter {
-    constructor (server) {
+    constructor () {
         this.paths = {}
     }
 
