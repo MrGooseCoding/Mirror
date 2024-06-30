@@ -1,8 +1,8 @@
 const WebSocketRouter = require('./router')
-const roomWS = require('./routes/room')
+const roomRouter = require('./routes/room')
 
 const router = new WebSocketRouter()
 
-router.use('/ws/room/', roomWS)
+router.use('/ws', roomRouter)
 
 module.exports = router

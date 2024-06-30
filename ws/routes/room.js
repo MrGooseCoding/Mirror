@@ -1,6 +1,8 @@
-const ws = require('./../ws')
+const WebSocketRouter = require('../router');
 
-const roomWS = ws((ws) => {
+const wsRouter = new WebSocketRouter()
+
+wsRouter.ws('/room/', (ws) => {
     console.log('New chat WebSocket connection');
 
     ws.on('message', (message) => {
@@ -12,4 +14,4 @@ const roomWS = ws((ws) => {
     });
 })
 
-module.exports = roomWS
+module.exports = wsRouter
