@@ -6,14 +6,15 @@ function WebSocketServer(server) {
     const wss = new WebSocket.Server({ noServer:true });
 
     server.on('upgrade', (request, socket, head) => {
-        const pathname = request.url.startsWith('/') ? request.url : new URL (request.url).pathname
+        const url = request.url.startsWith('/') ? `ws://localhost:3000${request.url}` : request.url
+        const pathname = new URL(url).pathname
 
         const paths = router.getPaths()
         const handlerFunction = paths[pathname]
 
         wss.handleUpgrade(request, socket, head, (ws) => {
             wss.emit('connection', ws, request);
-            handlerFunction(ws);
+            handlerFunction(url, ws);
         });
     });
 

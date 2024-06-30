@@ -1,5 +1,6 @@
 function ws (handler) {
-    const wrappedHandler = (ws) => {
+    const wrappedHandler = (url, ws) => {
+        console.log(url)
         handler(ws)
     }
 

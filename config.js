@@ -1,6 +1,7 @@
 const config = {
     dbPath: 'database.db',
     appName: 'NodeAuth',
+    port: 3000,
 
     validate_email: false, // Validate email address during registration and login
     validation_email: {

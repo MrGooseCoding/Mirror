@@ -1,6 +1,7 @@
 const express = require('express');
 const http = require('http');
 
+const config = require('./config.js')
 const api = require('./api/urls.js'); // Import the user routes
 const WebSocketServer = require('./ws/server')
 
@@ -14,7 +15,7 @@ const wss = WebSocketServer(server)
 
 // Add more route files as needed
 
-const port = 3000;
+const port = config.port
 server.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
