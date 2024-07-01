@@ -119,8 +119,6 @@ class Validator {
 
         const valid = isNull || isInstance
 
-        console.log(isNull, isInstance, typeof attrValue === type_name, typeof attrValue)
-
         if (!valid) {
             this.errors[attrName] = `${attrName} is not an instance of ${type_name}`
         }
