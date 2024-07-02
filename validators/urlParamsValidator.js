@@ -23,10 +23,14 @@ class urlParamsValidator extends Validator {
         //await this.format_parameter(attrName, model)
 
         const attrValue = this.data[attrName]
+
+        if (attrValue == undefined) {
+            return false
+        }
+
         const model_obj = await model.objects_getBy(database_name, attrValue)
         
         const model_name = model.name
-
 
         if (model_obj["error"]) {
             this.errors["token"] = `No ${model_name} with ${attrName} equal to ${attrValue}`
