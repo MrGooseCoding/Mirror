@@ -15,15 +15,18 @@ class urlParamsValidator extends Validator {
     async token_valid () {
         return (
             this.not_null("token") &&
-            await this.model_exists("token", User)
+            await this.model_exists("token", "token", User)
         )
     }
 
-    async model_exists(attrName, model) {
+    async model_exists(attrName, database_name, model) {
+        //await this.format_parameter(attrName, model)
+
         const attrValue = this.data[attrName]
-        const model_obj = await model.objects_getBy(attrName, attrValue)
+        const model_obj = await model.objects_getBy(database_name, attrValue)
         
         const model_name = model.name
+
 
         if (model_obj["error"]) {
             this.errors["token"] = `No ${model_name} with ${attrName} equal to ${attrValue}`
