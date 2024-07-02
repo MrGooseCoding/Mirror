@@ -69,20 +69,20 @@ class WebSocketRouter {
      *              "model": Model
      *          }
      *     ]
+     *     "inner_logic_validation": async () => {} # A function that contains more advanced logic. Returns a string with the error. It will be executed in the wrappedHandler function
      * }
      * ```
      */
     ws (path, handler, validatorOptions) {
-        const required_parameters = validatorOptions.required_parameters
-        const model_parameters = validatorOptions.model_parameters
-        const auth = validatorOptions.auth
+        const { required_parameters, model_parameters, auth, inner_logic_validation } = validatorOptions
         
         const handlerValidator = async (url, socket) => {
             const validator = new urlParamsValidator(url)
             await validator.format_data()
 
+            
             const all_required_parameters = validator.check_required_parameters(required_parameters)            
-
+            
             var model_parameters_valid = true
             for await (let i of model_parameters) {
                 const valid = await validator.model_exists(i.param_name, i.database_name, i.model)
@@ -91,40 +91,44 @@ class WebSocketRouter {
                     break
                 }
             }
-
+            
             if (!all_required_parameters || !model_parameters_valid) {
                 socket.write('HTTP/1.1 400 Bad Request\r\n\r\n');
                 socket.destroy()
                 return false
             }
-
+            
             if (auth) {
                 const token_valid = await validator.token_valid()
-
+                
                 if (!token_valid) {
                     socket.write('HTTP/1.1 401 Unauthorized\r\n\r\n');
                     socket.destroy()
                     return false
                 }
             }
-
+            
             return true
         }
         
-        const wrappedHandler = async (url, ws) => {
-            const validator = new urlParamsValidator(url)
-            await validator.format_data()
-
-            const url_params = validator.data
-
-            var user;
-            if (auth) {
-                user = User.objects_getBy("token", validator.data.token)
+        /**
+         * This function is meant to retrieve data from the database and give it as a model to the final ws function. It also performs more detailed and logical validation that cannot be automated (Like comparing two results, for instance)
+        */
+       const wrappedHandler = async (url, ws) => {
+           const validator = new urlParamsValidator(url)
+           await validator.format_data()
+           
+           const url_params = validator.data
+           
+           var user;
+           if (auth) {
+               user = await User.objects_getBy("token", validator.data.token)
             } else {
                 user = undefined
             }
-
+            
             var model_params = {}
+            
             for await (let i of model_parameters) {
                 const model = i.model
                 const model_name = model.name.toLowerCase()
@@ -134,7 +138,15 @@ class WebSocketRouter {
                 model_params[model_name] = model_obj
             }
 
-            handler(ws, user, model_params, url_params)
+            const error = await inner_logic_validation(user, model_params, url_params)
+
+            if (error) {
+                ws.send({ type: "error", error})
+                ws.close()
+                return
+            }
+
+            await handler(ws, user, model_params, url_params)
         }
         
         this.handlers[path] = wrappedHandler
