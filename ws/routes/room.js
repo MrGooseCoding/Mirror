@@ -1,5 +1,6 @@
 const Room = require('./../../models/room')
 const RoomMember = require('./../../models/room_member')
+const User = require('./../../models/user')
 const WebSocketRouter = require('../router');
 const wsRouter = new WebSocketRouter()
 
@@ -7,12 +8,26 @@ const wsRouter = new WebSocketRouter()
  * Used to Send updates of member joins, exits and vote.
  */
 wsRouter.ws('/room/', async (ws, user, model_params, parameters) => {
+    const room = model_params.room
+
+    await room.addMember(user)
     
-    ws.on('message', (message) => {
-        ws.send(`Chat: You said: ${message}`);
+    ws.send({ type: "room", data: room.json() })
+
+    const members_json = []
+    for await (let i of await room.getMembers()) {
+        const data = await i.json()
+        members_json.push(data)
+    }
+
+    ws.send({ type: "members", data: members_json})
+    
+    ws.on('message', async (message) => {
+        ws.send(`Chat: You said: ${message.data}`);
     });
 
-    ws.on('close', () => {
+    ws.on('close', async () => {
+        RoomMember.objects_deleteBy('user', user.json().id)
     });
 }, {
     required_parameters: ["code"],
@@ -25,7 +40,6 @@ wsRouter.ws('/room/', async (ws, user, model_params, parameters) => {
         }
     ],
     inner_logic_validation: async (user, model_params, url_params) => {
-        console.log(model_params, user)
         const room = model_params["room"]
         const member_count = await room.getMemberCount()
         if (member_count >= 8) {

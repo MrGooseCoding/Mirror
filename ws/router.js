@@ -1,4 +1,5 @@
 const WebSocket = require('ws')
+const WrappedWebSocket = require('./websocket')
 const urlParamsValidator = require('../validators/urlParamsValidator')
 const User = require('../models/user')
 
@@ -110,18 +111,18 @@ class WebSocketRouter {
             
             return true
         }
-        
+
         /**
          * This function is meant to retrieve data from the database and give it as a model to the final ws function. It also performs more detailed and logical validation that cannot be automated (Like comparing two results, for instance)
         */
-       const wrappedHandler = async (url, ws) => {
-           const validator = new urlParamsValidator(url)
-           await validator.format_data()
-           
-           const url_params = validator.data
-           
-           var user;
-           if (auth) {
+        const wrappedHandler = async (url, ws) => {
+            const validator = new urlParamsValidator(url)
+            await validator.format_data()
+            
+            const url_params = validator.data
+            
+            var user;
+            if (auth) {
                user = await User.objects_getBy("token", validator.data.token)
             } else {
                 user = undefined
@@ -141,12 +142,14 @@ class WebSocketRouter {
             const error = await inner_logic_validation(user, model_params, url_params)
 
             if (error) {
-                ws.send({ type: "error", error})
+                ws.send(JSON.stringify({ type: "error", error}))
                 ws.close()
                 return
             }
 
-            await handler(ws, user, model_params, url_params)
+            const wrappedWs = new WrappedWebSocket(ws)
+
+            await handler(wrappedWs, user, model_params, url_params)
         }
         
         this.handlers[path] = wrappedHandler
