@@ -4,6 +4,6 @@ CREATE TABLE IF NOT EXISTS "room_members" (
     "user" TEXT NOT NULL,
     "type" TEXT NOT NULL,
     "voted_game" INTEGER,
-    FOREIGN KEY ("room") REFERENCES "room"("id")
+    FOREIGN KEY ("room") REFERENCES "rooms"("id")
 );
 COMMIT;
