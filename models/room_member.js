@@ -1,4 +1,5 @@
 const Model = require('./model')
+const User = require('./user')
 
 class RoomMember extends Model {
     static name = "RoomMember"
@@ -22,6 +23,16 @@ class RoomMember extends Model {
     static async in_party(user) {
         const data = await RoomMember.objects_getBy('user', user.json().id)
         return !data.error
+    }
+
+    async json() {
+        const { user, type } = this.data
+        const user_data = await User.objects_getBy('id', user)
+        const final_data = {
+            type,
+            user: user_data.json()
+        }
+        return final_data
     }
 }
 
