@@ -13,7 +13,6 @@ class RoomMember extends Model {
         var formatted_data = {
             room: data.room.json().id,
             user: data.user.json().id,
-            type: data.type,
             voted_game: data.voted_game
         }
 
@@ -26,13 +25,9 @@ class RoomMember extends Model {
     }
 
     async json() {
-        const { user, type } = this.data
+        const { user } = this.data
         const user_data = await User.objects_getBy('id', user)
-        const final_data = {
-            type,
-            user: user_data.json()
-        }
-        return final_data
+        return user_data
     }
 }
 
