@@ -14,6 +14,11 @@ api('/create/', async (req, res, validator, user) => {
         return res.status(400).json({ error: "User already in party"})
     }
 
+    const room_already_created = await Room.objects_getBy("admin", user.json().id)
+    if (!room_already_created['error']) {
+        return res.status(201).json(room_already_created.json())
+    }
+
     const room = await Room.create(user)
 
     return res.status(201).json(room.json())
