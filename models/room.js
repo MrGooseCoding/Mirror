@@ -14,16 +14,10 @@ class Room extends Model {
         const data = {
             id: generate_uuid(),
             code: generate_code(),
+            admin: admin.json().id,
             game: ""
         }
         const room = await this._create(data)
-        await RoomMember.create({
-            room: room,
-            user: admin,
-            type: "admin",
-            voted_game: ""
-        })
-
         return room
     }
 
@@ -31,7 +25,6 @@ class Room extends Model {
         await RoomMember.create({
             room: this,
             user: member,
-            type: "participant",
             voted: ""
         })
     }
