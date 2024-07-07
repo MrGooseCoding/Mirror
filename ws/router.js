@@ -36,8 +36,7 @@ class WebSocketRouter {
     }
     
     getHandler (pathname) {
-        const formatted_pathname = pathname.endsWith('/') ? pathname : `${pathname}/`
-        const handler = this.handlers[formatted_pathname]
+        const handler = this.handlers[pathname]
         if (!handler) {
             return { error: "No handler found" }
         }
@@ -115,7 +114,7 @@ class WebSocketRouter {
         /**
          * This function is meant to retrieve data from the database and give it as a model to the final ws function. It also performs more detailed and logical validation that cannot be automated (Like comparing two results, for instance)
         */
-        const wrappedHandler = async (url, ws) => {
+        const wrappedHandler = async (url, ws, wss) => {
             const validator = new urlParamsValidator(url)
             await validator.format_data()
             
@@ -123,7 +122,7 @@ class WebSocketRouter {
             
             var user;
             if (auth) {
-               user = await User.objects_getBy("token", validator.data.token)
+                user = await User.objects_getBy("token", validator.data.token)
             } else {
                 user = undefined
             }
@@ -147,7 +146,7 @@ class WebSocketRouter {
                 return
             }
 
-            const wrappedWs = new WrappedWebSocket(ws)
+            const wrappedWs = new WrappedWebSocket(ws, wss)
 
             await handler(wrappedWs, user, model_params, url_params)
         }

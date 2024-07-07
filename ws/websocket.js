@@ -1,12 +1,16 @@
 const basicValidator = require('./../validators/basicValidator')
 
 class WrappedWebSocket {
-    constructor(ws) {
+    constructor(ws, wss) {
         this.ws = ws
+        this.wss = wss
     }
 
     send(json) {
         this.ws.send(JSON.stringify(json))
+    }
+
+    send_all(requirement, data) {
     }
 
     on(event_name, fun) {

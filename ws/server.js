@@ -1,16 +1,25 @@
-const  router = require('./urls');
+const router = require('./urls');
 const WebSocket = require('ws')
+
+const { format_pathname } = require('./../utils/url_tools')
 
 const { port } = require('./../config')
 
 const { URL } = require('url');
 
 function WebSocketServer(server) {
-    const wss = new WebSocket.Server({ noServer:true });
+    const wss_per_pathname = {}
+    
+    const pathnames = Object.keys(router.getHandlers())
+
+    pathnames.forEach(path => {
+        const wss = new WebSocket.Server({ noServer:true });
+        wss_per_pathname[path] = wss
+    });
 
     server.on('upgrade', async (request, socket, head) => {
         const url = request.url.startsWith('/') ? `ws://localhost:${port}${request.url}` : request.url
-        const pathname = new URL(url).pathname
+        const pathname = format_pathname(new URL(url).pathname)
 
         const handlerFunction = router.getHandler(pathname)
     
@@ -29,14 +38,13 @@ function WebSocketServer(server) {
 
         // If so, continue
         if (valid) {
+            const wss = wss_per_pathname[pathname]
             wss.handleUpgrade(request, socket, head, async (ws) => {
                 wss.emit('connection', ws, request);
-                await handlerFunction(url, ws);
+                await handlerFunction(url, ws, wss);
             });
         }
     });
-
-    return wss;
 }
 
 module.exports = WebSocketServer;
