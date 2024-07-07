@@ -13,6 +13,14 @@ class WrappedWebSocket {
     send_all(requirement, data) {
     }
 
+    setAttr (attrName, attrValue) {
+        this.ws[attrName] = attrValue
+    }
+
+    getAttr (attrName) {
+        return this.ws[attrName]
+    }
+
     on(event_name, fun) {
         if (event_name == "message") {
             this.ws.on("message", (message) => {
