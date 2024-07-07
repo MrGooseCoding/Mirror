@@ -122,7 +122,7 @@ class WebSocketRouter {
             
             var user;
             if (auth) {
-                user = await User.objects_getBy("token", validator.data.token)
+                user = await User.objects_getBy("token", url_params.token)
             } else {
                 user = undefined
             }
@@ -147,6 +147,11 @@ class WebSocketRouter {
             }
 
             const wrappedWs = new WrappedWebSocket(ws, wss)
+
+            if (auth) {
+                wrappedWs.setAttr("token", url_params.token)
+                wrappedWs.setAttr("room_code", url_params.code)
+            }
 
             await handler(wrappedWs, user, model_params, url_params)
         }

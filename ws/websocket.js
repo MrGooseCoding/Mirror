@@ -1,4 +1,5 @@
 const basicValidator = require('./../validators/basicValidator')
+const { WebSocket } = require('ws')
 
 class WrappedWebSocket {
     constructor(ws, wss) {
@@ -10,7 +11,18 @@ class WrappedWebSocket {
         this.ws.send(JSON.stringify(json))
     }
 
-    send_all(requirement, data) {
+    send_all(identifier, data) {
+        const identifierName = Object.keys(identifier)[0]
+        const identifierValue = identifier[identifierName]
+        this.wss.clients.forEach(client => {
+            if (client.readyState === WebSocket.OPEN) {
+                console.log(identifierName)
+                console.log(client[identifierName])
+                if (client[identifierName] == identifierValue) {
+                    client.send(JSON.stringify(data))
+                }
+            }
+        });
     }
 
     setAttr (attrName, attrValue) {

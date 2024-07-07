@@ -9,6 +9,7 @@ const wsRouter = new WebSocketRouter()
  */
 wsRouter.ws('/room/', async (ws, user, model_params, parameters) => {
     const room = model_params.room
+    const is_admin =  room.is_admin(user)
 
     await room.addMember(user)
     
@@ -20,10 +21,24 @@ wsRouter.ws('/room/', async (ws, user, model_params, parameters) => {
         members_json.push(data)
     }
 
-    ws.send({ type: "members", data: members_json})
+    ws.send({ type: "members", data: members_json })
     
     ws.on('message', async (message) => {
         ws.send(`Chat: You said: ${message.data}`);
+
+        if (message.type == "start_voting") {
+            if (!is_admin) {
+                ws.send({ error: "You do not have permission to do this" })
+                ws.close()
+                return
+            }
+
+            ws.send_all({
+                room_code: room.json().code
+            }, { 
+                type: message.type,
+            })
+        }
     });
 
     ws.on('close', async () => {
