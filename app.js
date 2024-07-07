@@ -11,7 +11,7 @@ app.use(express.json())
 app.use('/api', api);
 
 const server = http.createServer(app)
-const wss = WebSocketServer(server)
+WebSocketServer(server)
 
 // Add more route files as needed
 
