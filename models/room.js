@@ -29,6 +29,10 @@ class Room extends Model {
         })
     }
 
+    is_admin (user) {
+        return this.data.admin == user.json().id
+    }
+
     async getMembers () {
         return await RoomMember.objects_searchBy('room', this.json().id, 20)
     }
