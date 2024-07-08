@@ -21,10 +21,10 @@ class Room extends Model {
         return room
     }
 
-    async addMember (member) {
-        await RoomMember.create({
+    async addMember (user) {
+        return await RoomMember.create({
             room: this,
-            user: member,
+            user: user,
             voted: ""
         })
     }
