@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS "rooms" (
 	"id"	TEXT NOT NULL UNIQUE,
 	"code"	INTEGER NOT NULL UNIQUE,
 	"admin"	TEXT NOT NULL UNIQUE,
-	"game"	TEXT,
+	"is_game"	INTEGER NOT NULL,
 	PRIMARY KEY("id"),
 	FOREIGN KEY("admin") REFERENCES "users"("id")
 );
