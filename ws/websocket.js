@@ -11,16 +11,24 @@ class WrappedWebSocket {
         this.ws.send(JSON.stringify(json))
     }
 
-    send_all(identifier, data) {
+    for_all_clients (identifier, fun) {
         const identifierName = Object.keys(identifier)[0]
         const identifierValue = identifier[identifierName]
         this.wss.clients.forEach(client => {
             if (client.readyState === WebSocket.OPEN) {
                 if (client[identifierName] == identifierValue) {
-                    client.send(JSON.stringify(data))
+                    fun(client)
                 }
             }
-        });
+        })
+    }
+
+    send_all(identifier, data) {
+        this.for_all_clients(identifier, (c) => c.send(JSON.stringify(data)))
+    }
+    
+    close_all(identifier) {
+        this.for_all_clients(identifier, (c) => c.close())
     }
 
     setAttr (attrName, attrValue) {

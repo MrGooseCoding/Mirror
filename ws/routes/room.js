@@ -87,14 +87,16 @@ wsRouter.ws('/room/', async (ws, user, model_params, parameters, roomStorage) =>
 
             const {most_voted} = count_votes(votes)
 
-            roomStorage.empty()
-
             ws.send_all({
                 room_code: room.json().code
             }, { 
                 type: "start_game",
                 data: most_voted
             })
+
+            ws.close_all({
+                room_code: room.json().code
+            }) 
         }
 
         if (message.type == "vote") {
@@ -132,6 +134,10 @@ wsRouter.ws('/room/', async (ws, user, model_params, parameters, roomStorage) =>
             type: "member_left",
             data: member_json
         })
+        if (await Room.getMemberCount() === 0) {
+            roomStorage.empty()
+            Room.objects_deleteBy('id', room.json().id)
+        }
     });
 }, {
     required_parameters: ["code"],
