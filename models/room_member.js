@@ -27,7 +27,7 @@ class RoomMember extends Model {
     async json() {
         const { user } = this.data
         const user_data = await User.objects_getBy('id', user)
-        return user_data
+        return user_data.json()
     }
 }
 
