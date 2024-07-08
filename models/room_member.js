@@ -1,5 +1,6 @@
 const Model = require('./model')
 const User = require('./user')
+const { generate_uuid } = require('./../utils/generators')
 
 class RoomMember extends Model {
     static name = "RoomMember"
@@ -13,7 +14,7 @@ class RoomMember extends Model {
         var formatted_data = {
             room: data.room.json().id,
             user: data.user.json().id,
-            voted_game: data.voted_game
+            redirection_key: generate_uuid()
         }
 
         return await this._create(formatted_data, false)
