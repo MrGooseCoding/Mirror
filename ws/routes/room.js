@@ -1,5 +1,6 @@
 const Room = require('./../../models/room')
 const RoomMember = require('./../../models/room_member')
+const { games } = require('./../../config')
 const User = require('./../../models/user')
 const WebSocketRouter = require('../router');
 const wsRouter = new WebSocketRouter()
@@ -12,7 +13,7 @@ wsRouter.ws('/room/', async (ws, user, model_params, parameters, roomStorage) =>
     const is_admin =  room.is_admin(user)
 
     ws.send({ type: "room", data: room.json() })
-    
+
     const members_json = []
     for await (let i of await room.getMembers()) {
         const data = await i.json()
@@ -22,20 +23,25 @@ wsRouter.ws('/room/', async (ws, user, model_params, parameters, roomStorage) =>
     ws.send({ type: "members", data: members_json })
 
     const member = await room.addMember(user)
+    const member_json = await member.json()
 
     ws.send_all({
         room_code: room.json().code
     }, { 
         type: "member_joined",
-        data: await member.json()
+        data: member_json
     })
     
     ws.on('message', async (message) => {
-        ws.send(`Chat: You said: ${message.data}`);
-        
         if (message.type == "start_voting") {
             if (!is_admin) {
                 ws.send({ error: "You do not have permission to do this" })
+                ws.close()
+                return
+            }
+
+            if (roomStorage.getAttr("status") === 'voting') {
+                ws.send({ error: "Already in voting status" })
                 ws.close()
                 return
             }
@@ -50,23 +56,39 @@ wsRouter.ws('/room/', async (ws, user, model_params, parameters, roomStorage) =>
         }
 
         if (message.type == "vote") {
+            const voted_game = message.data
             if (roomStorage.getAttr("status") !== "voting") {
                 ws.send({ error: "You can only vote during voting status" })
                 ws.close()
                 return
             }
             
-            console.log(roomStorage)
+            if (!games.includes(voted_game)) {
+                ws.send({ error: "Not a valid game" })
+                ws.close()
+                return
+            }
+            
+            var votes = roomStorage.getAttr("votes", {})
+            votes[member_json.id] = voted_game
+            roomStorage.setAttr("votes", votes)
+
+            ws.send_all({
+                room_code: room.json().code
+            }, { 
+                type: "vote",
+                data: voted_game
+            })
         }
     });
-
+    
     ws.on('close', async () => {
         RoomMember.objects_deleteBy('user', user.json().id)
         ws.send_all({
             room_code: room.json().code
         }, { 
             type: "member_left",
-            data: await member.json()
+            data: member_json
         })
     });
 }, {

@@ -13,6 +13,17 @@ class Storage {
     getAttr(attrName) {
         return this.data[attrName]
     }
+
+    getAttr(attrName, def) {
+        if (!this.data[attrName]) {
+            this.data[attrName] = def
+        }
+        return this.data[attrName]
+    }
+
+    empty() {
+        this.data = {}
+    }
 }
 
 module.exports = Storage

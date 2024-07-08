@@ -15,7 +15,12 @@ If you didn't register on our website, please ignore this email.
 
 Thanks,
 %s Team`
-    }
+    },
+
+    // The list of games allowed. You may remove or add games here
+    games: [
+        "impostor",
+    ]
 }
 
 module.exports = config
