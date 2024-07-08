@@ -1,4 +1,5 @@
 const WebSocket = require('ws')
+const Storage = require('./storage')
 const WrappedWebSocket = require('./websocket')
 const urlParamsValidator = require('../validators/urlParamsValidator')
 const User = require('../models/user')
@@ -10,6 +11,8 @@ class WebSocketRouter {
          * A dictionary that contains functions that validate weather a request is valid to pass it to our websocket
          */
         this.validators = {}
+
+        this._storages = {}
     }
 
     use (path, router) {
@@ -70,11 +73,12 @@ class WebSocketRouter {
      *          }
      *     ]
      *     "inner_logic_validation": async () => {} # A function that contains more advanced logic. Returns a string with the error. It will be executed in the wrappedHandler function
+     *     "storage_identifier": "" # All ws with the same storage identifier value will have a common storage 
      * }
      * ```
      */
     ws (path, handler, validatorOptions) {
-        const { required_parameters, model_parameters, auth, inner_logic_validation } = validatorOptions
+        const { required_parameters, model_parameters, auth, inner_logic_validation, storage_identifier } = validatorOptions
         
         const handlerValidator = async (url, socket) => {
             const validator = new urlParamsValidator(url)
@@ -153,7 +157,15 @@ class WebSocketRouter {
                 wrappedWs.setAttr("room_code", url_params.code)
             }
 
-            await handler(wrappedWs, user, model_params, url_params)
+            const storage_identifier_value = url_params[storage_identifier]
+
+            if (!this._storages[storage_identifier_value]) {
+                this._storages[storage_identifier_value] = new Storage()
+            }
+            
+            const storage = this._storages[storage_identifier_value]
+
+            await handler(wrappedWs, user, model_params, url_params, storage)
         }
         
         this.handlers[path] = wrappedHandler

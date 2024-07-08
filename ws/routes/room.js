@@ -7,31 +7,40 @@ const wsRouter = new WebSocketRouter()
 /**
  * Used to Send updates of member joins, exits and vote.
  */
-wsRouter.ws('/room/', async (ws, user, model_params, parameters) => {
+wsRouter.ws('/room/', async (ws, user, model_params, parameters, roomStorage) => {
     const room = model_params.room
     const is_admin =  room.is_admin(user)
 
-    await room.addMember(user)
-    
     ws.send({ type: "room", data: room.json() })
-
+    
     const members_json = []
     for await (let i of await room.getMembers()) {
         const data = await i.json()
         members_json.push(data)
     }
-
+    
     ws.send({ type: "members", data: members_json })
+
+    const member = await room.addMember(user)
+
+    ws.send_all({
+        room_code: room.json().code
+    }, { 
+        type: "member_joined",
+        data: await member.json()
+    })
     
     ws.on('message', async (message) => {
         ws.send(`Chat: You said: ${message.data}`);
-
+        
         if (message.type == "start_voting") {
             if (!is_admin) {
                 ws.send({ error: "You do not have permission to do this" })
                 ws.close()
                 return
             }
+            
+            roomStorage.setAttr("status", "voting")
 
             ws.send_all({
                 room_code: room.json().code
@@ -39,10 +48,26 @@ wsRouter.ws('/room/', async (ws, user, model_params, parameters) => {
                 type: message.type,
             })
         }
+
+        if (message.type == "vote") {
+            if (roomStorage.getAttr("status") !== "voting") {
+                ws.send({ error: "You can only vote during voting status" })
+                ws.close()
+                return
+            }
+            
+            console.log(roomStorage)
+        }
     });
 
     ws.on('close', async () => {
         RoomMember.objects_deleteBy('user', user.json().id)
+        ws.send_all({
+            room_code: room.json().code
+        }, { 
+            type: "member_left",
+            data: await member.json()
+        })
     });
 }, {
     required_parameters: ["code"],
@@ -67,7 +92,8 @@ wsRouter.ws('/room/', async (ws, user, model_params, parameters) => {
         }
 
         return false
-    }
+    },
+    storage_identifier: "code"
 })
 
 module.exports = wsRouter

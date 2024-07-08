@@ -16,8 +16,6 @@ class WrappedWebSocket {
         const identifierValue = identifier[identifierName]
         this.wss.clients.forEach(client => {
             if (client.readyState === WebSocket.OPEN) {
-                console.log(identifierName)
-                console.log(client[identifierName])
                 if (client[identifierName] == identifierValue) {
                     client.send(JSON.stringify(data))
                 }
