@@ -3,6 +3,7 @@ const RoomMember = require('./../../models/room_member')
 const { games } = require('./../../config')
 const User = require('./../../models/user')
 const WebSocketRouter = require('../router');
+const { count_votes } = require('../../utils/other');
 const wsRouter = new WebSocketRouter()
 
 /**
@@ -58,6 +59,41 @@ wsRouter.ws('/room/', async (ws, user, model_params, parameters, roomStorage) =>
                 room_code: room.json().code
             }, { 
                 type: message.type,
+            })
+        }
+        
+        if (message.type == "start_game") {
+            if (!is_admin) {
+                ws.send({ error: "You do not have permission to do this" })
+                ws.close()
+                return
+            }
+
+            if (!roomStorage.getAttr("status") === 'voting') {
+                ws.send({ error: "Not in voting status" })
+                ws.close()
+                return
+            }
+            
+            var votes = roomStorage.getAttr("votes", {})
+            const number_of_votes = Object.keys(votes).length
+            const member_count = await room.getMemberCount()
+
+            if (number_of_votes < member_count) {
+                ws.send({ error: "Wait until every member has voted" })
+                ws.close()
+                return
+            }
+
+            const {most_voted} = count_votes(votes)
+
+            roomStorage.empty()
+
+            ws.send_all({
+                room_code: room.json().code
+            }, { 
+                type: "start_game",
+                data: most_voted
             })
         }
 

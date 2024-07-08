@@ -38,7 +38,8 @@ class Room extends Model {
     }
 
     async getMemberCount () {
-        return await this.getMembers().length
+        const members = await this.getMembers()
+        return members.length
     }
 }
 
