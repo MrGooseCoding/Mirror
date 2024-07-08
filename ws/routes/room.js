@@ -9,6 +9,12 @@ const wsRouter = new WebSocketRouter()
  * Used to Send updates of member joins, exits and vote.
  */
 wsRouter.ws('/room/', async (ws, user, model_params, parameters, roomStorage) => {
+    if (roomStorage.getAttr("status", "start") !== "start") {
+        ws.send({ error: "Cannot join while not in start status" })
+        ws.close()
+        return
+    }
+
     const room = model_params.room
     const is_admin =  room.is_admin(user)
 
