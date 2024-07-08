@@ -128,16 +128,17 @@ wsRouter.ws('/room/', async (ws, user, model_params, parameters, roomStorage) =>
     
     ws.on('close', async () => {
         RoomMember.objects_deleteBy('user', user.json().id)
+        if (await room.getMemberCount() === 0) {
+            roomStorage.empty()
+            Room.objects_deleteBy('id', room.json().id)
+            return
+        }
         ws.send_all({
             room_code: room.json().code
         }, { 
             type: "member_left",
             data: member_json
         })
-        if (await Room.getMemberCount() === 0) {
-            roomStorage.empty()
-            Room.objects_deleteBy('id', room.json().id)
-        }
     });
 }, {
     required_parameters: ["code"],
