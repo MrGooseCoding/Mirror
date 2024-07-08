@@ -73,7 +73,7 @@ class WebSocketRouter {
      *          }
      *     ]
      *     "inner_logic_validation": async () => {} # A function that contains more advanced logic. Returns a string with the error. It will be executed in the wrappedHandler function
-     *     "storage_identifier": "" # All ws with the same storage identifier value will have a common storage 
+     *     "storage_identifier": async () => {} # All ws with the same storage identifier value will have a common storage. This function retrieves the identifier
      * }
      * ```
      */
@@ -84,7 +84,6 @@ class WebSocketRouter {
             const validator = new urlParamsValidator(url)
             await validator.format_data()
 
-            
             const all_required_parameters = validator.check_required_parameters(required_parameters)            
             
             var model_parameters_valid = true
@@ -145,7 +144,7 @@ class WebSocketRouter {
             const error = await inner_logic_validation(user, model_params, url_params)
 
             if (error) {
-                ws.send(JSON.stringify({ type: "error", error}))
+                ws.send(JSON.stringify({ type: "error", error }))
                 ws.close()
                 return
             }
@@ -157,7 +156,7 @@ class WebSocketRouter {
                 wrappedWs.setAttr("room_code", url_params.code)
             }
 
-            const storage_identifier_value = url_params[storage_identifier]
+            const storage_identifier_value = await storage_identifier(user, model_params, url_params)
 
             if (!this._storages[storage_identifier_value]) {
                 this._storages[storage_identifier_value] = new Storage()

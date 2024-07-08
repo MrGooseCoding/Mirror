@@ -20,6 +20,10 @@ class RoomMember extends Model {
         return await this._create(formatted_data, false)
     }
 
+    getRedirectionKey() {
+        return this.data.redirection_key
+    }
+
     static async in_party(user) {
         const data = await RoomMember.objects_getBy('user', user.json().id)
         return !data.error

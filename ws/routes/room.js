@@ -69,7 +69,9 @@ wsRouter.ws('/room/', async (ws, user, model_params, parameters, roomStorage) =>
                 return
             }
 
-            if (!roomStorage.getAttr("status") === 'voting') {
+            console.log(!roomStorage.getAttr("status") === "voting")
+
+            if (roomStorage.getAttr("status") !== 'voting') {
                 ws.send({ error: "Not in voting status" })
                 ws.close()
                 return
@@ -91,7 +93,10 @@ wsRouter.ws('/room/', async (ws, user, model_params, parameters, roomStorage) =>
                 room_code: room.json().code
             }, { 
                 type: "start_game",
-                data: most_voted
+                data: {
+                    game: most_voted,
+                    redirection_key: member.getRedirectionKey()
+                }
             })
 
             ws.close_all({
@@ -164,7 +169,7 @@ wsRouter.ws('/room/', async (ws, user, model_params, parameters, roomStorage) =>
 
         return false
     },
-    storage_identifier: "code"
+    storage_identifier: async (user, model_params, url_params) => url_params["code"]
 })
 
 module.exports = wsRouter
