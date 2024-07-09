@@ -1,6 +1,26 @@
 const basicValidator = require('./../validators/basicValidator')
 const { WebSocket } = require('ws')
 
+class WrappedClient {
+    constructor (client) {
+        this.client = client
+    }
+
+    send(json) {
+        console.log("Sending to ", this.client.user_id)
+        this.client.send(JSON.stringify(json))
+    }
+    
+    close() {
+        console.log("Closing to ", this.client.user_id)
+        this.client.close()
+    }
+
+    getAttr (attrName) {
+        return this.client[attrName]
+    }
+}
+
 class WrappedWebSocket {
     constructor(ws, wss) {
         this.ws = ws
@@ -11,24 +31,26 @@ class WrappedWebSocket {
         this.ws.send(JSON.stringify(json))
     }
 
-    for_all_clients (identifier, fun) {
+    async for_all_clients (identifier, fun) {
         const identifierName = Object.keys(identifier)[0]
         const identifierValue = identifier[identifierName]
-        this.wss.clients.forEach(client => {
+
+        for await (let client of this.wss.clients) {
             if (client.readyState === WebSocket.OPEN) {
-                if (client[identifierName] == identifierValue) {
-                    fun(client)
+                const c = new WrappedClient(client)
+                if (c.getAttr(identifierName) == identifierValue) {
+                    await fun(c)
                 }
             }
-        })
+        }
     }
 
     send_all(identifier, data) {
-        this.for_all_clients(identifier, (c) => c.send(JSON.stringify(data)))
+        this.for_all_clients(identifier, async (c) => c.send(data))
     }
     
     close_all(identifier) {
-        this.for_all_clients(identifier, (c) => c.close())
+        this.for_all_clients(identifier, async (c) => c.close())
     }
 
     setAttr (attrName, attrValue) {
