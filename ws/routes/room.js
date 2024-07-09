@@ -69,8 +69,6 @@ wsRouter.ws('/room/', async (ws, user, model_params, parameters, roomStorage) =>
                 return
             }
 
-            console.log(!roomStorage.getAttr("status") === "voting")
-
             if (roomStorage.getAttr("status") !== 'voting') {
                 ws.send({ error: "Not in voting status" })
                 ws.close()
@@ -89,14 +87,20 @@ wsRouter.ws('/room/', async (ws, user, model_params, parameters, roomStorage) =>
 
             const {most_voted} = count_votes(votes)
 
-            ws.send_all({
+            await room.change("is_game", 1)
+
+            await ws.for_all_clients({
                 room_code: room.json().code
-            }, { 
-                type: "start_game",
-                data: {
-                    game: most_voted,
-                    redirection_key: member.getRedirectionKey()
-                }
+            }, async (c) => {
+                const roommember = await RoomMember.objects_getBy("user", c.getAttr("user_id")) 
+                await c.send({ 
+                    type: "start_game",
+                    data: {
+                        game: most_voted,
+                        redirection_key: roommember.getRedirectionKey()
+                    }
+                })
+            
             })
 
             ws.close_all({
@@ -132,18 +136,22 @@ wsRouter.ws('/room/', async (ws, user, model_params, parameters, roomStorage) =>
     });
     
     ws.on('close', async () => {
-        RoomMember.objects_deleteBy('user', user.json().id)
-        if (await room.getMemberCount() === 0) {
-            roomStorage.empty()
-            Room.objects_deleteBy('id', room.json().id)
-            return
+        await room.refresh()
+        if (!room.is_game()) {
+            RoomMember.objects_deleteBy('user', user.json().id)
+            const member_count = await room.getMemberCount()
+            if (await room.getMemberCount() === 0) {
+                roomStorage.empty()
+                Room.objects_deleteBy('id', room.json().id)
+                return
+            }
+            ws.send_all({
+                room_code: room.json().code
+            }, { 
+                type: "member_left",
+                data: member_json
+            })
         }
-        ws.send_all({
-            room_code: room.json().code
-        }, { 
-            type: "member_left",
-            data: member_json
-        })
     });
 }, {
     required_parameters: ["code"],
