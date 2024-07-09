@@ -81,6 +81,10 @@ class Model {
         await this.objects_deleteBy("id", this.data.id)
     }
 
+    getAttr(attrName) {
+        return this.data[attrName]
+    }
+
     json () {
         let json = this.data
         return json
