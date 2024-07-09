@@ -152,7 +152,7 @@ class WebSocketRouter {
             const wrappedWs = new WrappedWebSocket(ws, wss)
 
             if (auth) {
-                wrappedWs.setAttr("token", url_params.token)
+                wrappedWs.setAttr("user_id", user.json().id)
                 wrappedWs.setAttr("room_code", url_params.code)
             }
 
