@@ -175,6 +175,10 @@ wsRouter.ws('/room/', async (ws, user, model_params, parameters, roomStorage) =>
             return "User already in party"
         }
 
+        if (room.is_game()) {
+            return "Cannot join while a game is being played"
+        }
+
         return false
     },
     storage_identifier: async (user, model_params, url_params) => url_params["code"]
