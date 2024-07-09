@@ -73,12 +73,12 @@ class WebSocketRouter {
      *          }
      *     ]
      *     "inner_logic_validation": async () => {} # A function that contains more advanced logic. Returns a string with the error. It will be executed in the wrappedHandler function
-     *     "storage_identifier": async () => {} # All ws with the same storage identifier value will have a common storage. This function retrieves the identifier
+     *     "room_identifier": async () => {} # All ws with the same room identifier value will have a common storage. It is also a way to clasify clients. This function retrieves the identifier
      * }
      * ```
      */
     ws (path, handler, validatorOptions) {
-        const { required_parameters, model_parameters, auth, inner_logic_validation, storage_identifier } = validatorOptions
+        const { required_parameters, model_parameters, auth, inner_logic_validation, room_identifier } = validatorOptions
         
         const handlerValidator = async (url, socket) => {
             const validator = new urlParamsValidator(url)
@@ -153,16 +153,17 @@ class WebSocketRouter {
 
             if (auth) {
                 wrappedWs.setAttr("user_id", user.json().id)
-                wrappedWs.setAttr("room_code", url_params.code)
             }
 
-            const storage_identifier_value = await storage_identifier(user, model_params, url_params)
+            const room_identifier_value = await room_identifier(user, model_params, url_params)
 
-            if (!this._storages[storage_identifier_value]) {
-                this._storages[storage_identifier_value] = new Storage()
+            wrappedWs.setAttr("room", room_identifier_value)
+
+            if (!this._storages[room_identifier_value]) {
+                this._storages[room_identifier_value] = new Storage()
             }
             
-            const storage = this._storages[storage_identifier_value]
+            const storage = this._storages[room_identifier_value]
 
             await handler(wrappedWs, user, model_params, url_params, storage)
         }

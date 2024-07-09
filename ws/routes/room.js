@@ -33,7 +33,7 @@ wsRouter.ws('/room/', async (ws, user, model_params, parameters, roomStorage) =>
     const member_json = await member.json()
 
     ws.send_all({
-        room_code: room.json().code
+        room: room.json().code
     }, { 
         type: "member_joined",
         data: member_json
@@ -56,7 +56,7 @@ wsRouter.ws('/room/', async (ws, user, model_params, parameters, roomStorage) =>
             roomStorage.setAttr("status", "voting")
 
             ws.send_all({
-                room_code: room.json().code
+                room: room.json().code
             }, { 
                 type: message.type,
             })
@@ -90,7 +90,7 @@ wsRouter.ws('/room/', async (ws, user, model_params, parameters, roomStorage) =>
             await room.change("is_game", 1)
 
             await ws.for_all_clients({
-                room_code: room.json().code
+                room: room.json().code
             }, async (c) => {
                 const roommember = await RoomMember.objects_getBy("user", c.getAttr("user_id")) 
                 await c.send({ 
@@ -104,7 +104,7 @@ wsRouter.ws('/room/', async (ws, user, model_params, parameters, roomStorage) =>
             })
 
             ws.close_all({
-                room_code: room.json().code
+                room: room.json().code
             }) 
         }
 
@@ -127,7 +127,7 @@ wsRouter.ws('/room/', async (ws, user, model_params, parameters, roomStorage) =>
             roomStorage.setAttr("votes", votes)
 
             ws.send_all({
-                room_code: room.json().code
+                room: room.json().code
             }, { 
                 type: "vote",
                 data: voted_game
@@ -138,15 +138,16 @@ wsRouter.ws('/room/', async (ws, user, model_params, parameters, roomStorage) =>
     ws.on('close', async () => {
         await room.refresh()
         if (!room.is_game()) {
-            RoomMember.objects_deleteBy('user', user.json().id)
+            await RoomMember.objects_deleteBy('user', user.json().id)
             const member_count = await room.getMemberCount()
+            console.log(member_count)
             if (member_count === 0) {
                 roomStorage.empty()
                 Room.objects_deleteBy('id', room.json().id)
                 return
             }
             ws.send_all({
-                room_code: room.json().code
+                room: room.json().code
             }, { 
                 type: "member_left",
                 data: member_json
@@ -181,7 +182,8 @@ wsRouter.ws('/room/', async (ws, user, model_params, parameters, roomStorage) =>
 
         return false
     },
-    storage_identifier: async (user, model_params, url_params) => url_params["code"]
+    // We will use the room code as an identifier, as it is easier in this websocket
+    room_identifier: async (user, model_params, url_params) => url_params["code"]
 })
 
 module.exports = wsRouter
