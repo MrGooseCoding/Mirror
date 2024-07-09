@@ -1,4 +1,5 @@
 const Model = require('./model')
+const Room = require('./room')
 const User = require('./user')
 const { generate_uuid } = require('./../utils/generators')
 
@@ -22,6 +23,11 @@ class RoomMember extends Model {
 
     getRedirectionKey() {
         return this.data.redirection_key
+    }
+
+    async getRoom () {
+        const room_id = this.data.room
+        return await Room.objects_getBy("id", room_id)
     }
 
     static async in_party(user) {
