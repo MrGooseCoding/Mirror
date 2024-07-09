@@ -140,7 +140,7 @@ wsRouter.ws('/room/', async (ws, user, model_params, parameters, roomStorage) =>
         if (!room.is_game()) {
             RoomMember.objects_deleteBy('user', user.json().id)
             const member_count = await room.getMemberCount()
-            if (await room.getMemberCount() === 0) {
+            if (member_count === 0) {
                 roomStorage.empty()
                 Room.objects_deleteBy('id', room.json().id)
                 return
