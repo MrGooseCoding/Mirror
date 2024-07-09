@@ -7,12 +7,10 @@ class WrappedClient {
     }
 
     send(json) {
-        console.log("Sending to ", this.client.user_id)
         this.client.send(JSON.stringify(json))
     }
     
     close() {
-        console.log("Closing to ", this.client.user_id)
         this.client.close()
     }
 
@@ -51,6 +49,16 @@ class WrappedWebSocket {
     
     close_all(identifier) {
         this.for_all_clients(identifier, async (c) => c.close())
+    }
+
+    async count_all(identifier) {
+        var count = 0
+
+        await this.for_all_clients(identifier, async (c) => {
+            count += 1
+        })
+
+        return count
     }
 
     setAttr (attrName, attrValue) {
