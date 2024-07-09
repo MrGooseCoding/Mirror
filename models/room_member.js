@@ -25,11 +25,6 @@ class RoomMember extends Model {
         return this.data.redirection_key
     }
 
-    async getRoom () {
-        const room_id = this.data.room
-        return await Room.objects_getBy("id", room_id)
-    }
-
     static async in_party(user) {
         const data = await RoomMember.objects_getBy('user', user.json().id)
         return !data.error
