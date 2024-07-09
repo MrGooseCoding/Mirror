@@ -70,8 +70,15 @@ class Model {
         return this
     }
 
+    async refresh () {
+        const db = database.open()
+        const identifierAttr = { id: this.data.id }
+        const new_data = await database.get(db, this.table, identifierAttr)
+        this.data = new_data[0]
+    }
+
     async delete () {
-        await Model.objects_deleteBy("id", this.data.id)
+        await this.objects_deleteBy("id", this.data.id)
     }
 
     json () {
