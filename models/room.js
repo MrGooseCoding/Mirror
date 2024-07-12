@@ -15,7 +15,8 @@ class Room extends Model {
             id: generate_uuid(),
             code: generate_code(),
             admin: admin.json().id,
-            is_game: 0
+            is_game: 0,
+            game: ""
         }
         const room = await this._create(data)
         return room
