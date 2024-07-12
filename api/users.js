@@ -33,10 +33,15 @@ api('/create/', async (req, res, validator, user) => {
     await validator.validate_all()
 
     const data = await validator.create()
+
+    if (!data[0]) {
+        res.status(400).json(data[1])
+        return
+    }
     
     config.validate_email & data[0] && await validator.send_validation_email()
 
-    return res.status(data[0] ? 201 : 400).json(data[1])
+    return res.status(201).json(data[1].json(true, false))
 }, router, userValidator)
 
 config.validate_email && api('/validateEmail/:code/', async (req, res, validator, user) => {
@@ -76,9 +81,8 @@ api('/update/:attrName/', async (req, res, validator, user) => {
         return res.json(error)
     }
 
-
     await user.change(attrName, validator.data[attrName])
-    return res.status(201).json(user.data)
+    return res.status(201).json(user.json())
 
 }, router, userValidator, true)
 
@@ -101,8 +105,7 @@ api('/login/', async (req, res, validator, user) => {
     delete validator.errors["username"]
 
     const result = await User.authenticate(validator.data.username, req.body.password)
-    return res.status(!result["error"] ? 200: 400).json(!result["error"] ? result.json() : result["error"])
-
+    return res.status(!result["error"] ? 200: 400).json(!result["error"] ? result.json(true, false) : result["error"])
     
 }, router, userValidator)
 

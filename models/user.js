@@ -29,10 +29,13 @@ class User extends Model{
         return match ? result : {error: "Invalid username or password"}
     }
 
-    json (removePassword=true) {
+    json (removePassword=true, removeToken=true) {
         let json = this.data
         if (removePassword) {
             delete json["password"]
+        }
+        if (removeToken) {
+            delete json["token"]
         }
         return json
     }
