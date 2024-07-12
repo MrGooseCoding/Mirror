@@ -78,7 +78,11 @@ class Model {
     }
 
     async delete () {
-        await this.objects_deleteBy("id", this.data.id)
+        const db = database.open()
+
+        const identifierAttr = { id: this.data.id }
+
+        return await database.deleteItem(db, this.table, identifierAttr)
     }
 
     getAttr(attrName) {
