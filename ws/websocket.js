@@ -43,12 +43,14 @@ class WrappedWebSocket {
         }
     }
 
-    send_all(identifier, data) {
-        this.for_all_clients(identifier, async (c) => c.send(data))
+    async send_all(identifier, data) {
+        await this.for_all_clients(identifier, async (c) => {
+            c.send(data)
+        })
     }
     
-    close_all(identifier) {
-        this.for_all_clients(identifier, async (c) => c.close())
+    async close_all(identifier) {
+        await this.for_all_clients(identifier, async (c) => c.close())
     }
 
     async count_all(identifier) {
