@@ -88,6 +88,7 @@ wsRouter.ws('/room/', async (ws, user, model_params, parameters, roomStorage) =>
             const {most_voted} = count_votes(votes)
 
             await room.change("is_game", 1)
+            await room.change("game", most_voted)
 
             await ws.for_all_clients({
                 room: room.json().code
@@ -140,7 +141,6 @@ wsRouter.ws('/room/', async (ws, user, model_params, parameters, roomStorage) =>
         if (!room.is_game()) {
             await RoomMember.objects_deleteBy('user', user.json().id)
             const member_count = await room.getMemberCount()
-            console.log(member_count)
             if (member_count === 0) {
                 roomStorage.empty()
                 Room.objects_deleteBy('id', room.json().id)
