@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS "rooms" (
 	"code"	INTEGER NOT NULL UNIQUE,
 	"admin"	TEXT NOT NULL UNIQUE,
 	"is_game"	INTEGER NOT NULL,
+	"game"	TEXT,
 	PRIMARY KEY("id"),
 	FOREIGN KEY("admin") REFERENCES "users"("id")
 );
