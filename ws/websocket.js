@@ -78,7 +78,7 @@ class WrappedWebSocket {
                 try {
                     json = JSON.parse(message)
                 } catch {
-                    this.send({ type: "error", error: "message not in json format"})
+                    this.send({ type: "error", data: "message not in json format"})
                     this.close()
                     return
                 }
@@ -86,7 +86,7 @@ class WrappedWebSocket {
                 const v = new basicValidator(json)
         
                 if (!v.not_null('type') || !v.of_type('type', String)) {
-                    this.send({ type: "error", error: "Invalid type attribute"})
+                    this.send({ type: "error", data: "Invalid type attribute"})
                     this.close()
                     return
                 }
