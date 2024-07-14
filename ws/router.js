@@ -144,7 +144,7 @@ class WebSocketRouter {
             const error = await inner_logic_validation(user, model_params, url_params)
 
             if (error) {
-                ws.send(JSON.stringify({ type: "error", error }))
+                ws.send(JSON.stringify({ type: "error", data: error }))
                 ws.close()
                 return
             }
