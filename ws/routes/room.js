@@ -11,7 +11,10 @@ const wsRouter = new WebSocketRouter()
  */
 wsRouter.ws('/room/', async (ws, user, model_params, parameters, roomStorage) => {
     if (roomStorage.getAttr("status", "start") !== "start") {
-        ws.send({ error: "Cannot join while not in start status" })
+        ws.send({
+            type: "error",
+            data: "Cannot join while not in start status"
+        })
         ws.close()
         return
     }
@@ -42,13 +45,19 @@ wsRouter.ws('/room/', async (ws, user, model_params, parameters, roomStorage) =>
     ws.on('message', async (message) => {
         if (message.type == "start_voting") {
             if (!is_admin) {
-                ws.send({ error: "You do not have permission to do this" })
+                ws.send({
+                    type: "error",
+                    data: "You do not have permission to do this"
+                })
                 ws.close()
                 return
             }
 
             if (roomStorage.getAttr("status") === 'voting') {
-                ws.send({ error: "Already in voting status" })
+                ws.send({
+                    type: "error",
+                    data: "Already in voting status"
+                })
                 ws.close()
                 return
             }
@@ -64,13 +73,19 @@ wsRouter.ws('/room/', async (ws, user, model_params, parameters, roomStorage) =>
         
         if (message.type == "start_game") {
             if (!is_admin) {
-                ws.send({ error: "You do not have permission to do this" })
+                ws.send({
+                    type: "error",
+                    data: "You do not have permission to do this"
+                })
                 ws.close()
                 return
             }
 
             if (roomStorage.getAttr("status") !== 'voting') {
-                ws.send({ error: "Not in voting status" })
+                ws.send({ 
+                    type: "error", 
+                    data: "Not in voting status"
+                })
                 ws.close()
                 return
             }
@@ -80,7 +95,10 @@ wsRouter.ws('/room/', async (ws, user, model_params, parameters, roomStorage) =>
             const member_count = await room.getMemberCount()
 
             if (number_of_votes < member_count) {
-                ws.send({ error: "Wait until every member has voted" })
+                ws.send({
+                    type: "error",
+                    data: "Wait until every member has voted"
+                })
                 ws.close()
                 return
             }
@@ -112,13 +130,19 @@ wsRouter.ws('/room/', async (ws, user, model_params, parameters, roomStorage) =>
         if (message.type == "vote") {
             const voted_game = message.data
             if (roomStorage.getAttr("status") !== "voting") {
-                ws.send({ error: "You can only vote during voting status" })
+                ws.send({
+                    type: "error",
+                    data: "You can only vote during voting status"
+                })
                 ws.close()
                 return
             }
             
             if (!games.includes(voted_game)) {
-                ws.send({ error: "Not a valid game" })
+                ws.send({
+                    type: "error",
+                    data:"Not a valid game"
+                })
                 ws.close()
                 return
             }
@@ -146,12 +170,24 @@ wsRouter.ws('/room/', async (ws, user, model_params, parameters, roomStorage) =>
                 Room.objects_deleteBy('id', room.json().id)
                 return
             }
-            ws.send_all({
-                room: room.json().code
-            }, { 
-                type: "member_left",
-                data: member_json
-            })
+            if (roomStorage.getAttr("status") !== "start") {
+                ws.send_all({
+                    room: room.json().code
+                }, {
+                    type: "error",
+                    data: `Member left during ${roomStorage.getAttr("status")} status`
+                })
+                ws.close_all({
+                    room: room.json().code
+                })
+            } else {
+                ws.send_all({
+                    room: room.json().code
+                }, {
+                    type: "member_left",
+                    data: member_json
+                })
+            }
         }
     });
 }, {
