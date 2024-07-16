@@ -20,7 +20,17 @@ Thanks,
     // The list of games allowed. You may remove or add games here
     games: [
         "impostor",
-    ]
+    ],
+
+    games_config: {
+        "impostor": {
+            "topics": [
+                "topic 1 here",
+                "topic 2 here"
+            ]
+            //"impostor_count"
+        }
+    }
 }
 
 module.exports = config
