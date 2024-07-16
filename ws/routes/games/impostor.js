@@ -46,28 +46,16 @@ wsRouter.ws('/impostor/', async (ws, u, model_params, parameters, roomStorage) =
             
             const topics = impostor_config.topics
             const members = await room.getMembers()
-        
-            // Choosing a random topic and sending it to all users
-            const random_topic_index = generate_random_integer(0, topics.length)
-            const topic = topics[random_topic_index]
-
-            roomStorage.setAttr("topic", topic)
-            
-            await ws.send_all({
-                room: room_id
-            }, {
-                type: "topic",
-                data: topic
-            })
 
             // Choosing roles
 
             const random_member_index = generate_random_integer(0, members.length)
             const impostor = members[random_member_index]
             
-            var crew = member
-            delete crew[random_member_index]
-            
+            var crew = members.filter(( v, i ) => {
+                return i !== random_member_index
+            })
+
             roomStorage.setAttr("impostor", impostor)
             roomStorage.setAttr("crew", crew)
             
@@ -86,16 +74,34 @@ wsRouter.ws('/impostor/', async (ws, u, model_params, parameters, roomStorage) =
                     })
                 }
             })
+        
+            // Choosing a random topic and sending it to the crew
+            
+            const random_topic_index = generate_random_integer(0, topics.length)
+            const topic = topics[random_topic_index]
+
+            roomStorage.setAttr("topic", topic)
+
+            await ws.for_all_clients({
+                room: room_id
+            }, async (c) => {
+                if (c.getAttr("user") !== impostor.getAttr("redirection_key")) {
+                    await c.send({
+                        type: "topic",
+                        data: topic
+                    })
+                }
+            })
             
             // Sorting members randomly (random order)
-            
+
             const member_order = shuffle_array(members)
             
             roomStorage.setAttr("members", member_order)
             
             const member_order_json = []
-            for await (let member of member_order) {
-                const member_json = await member.json()
+            for await (let _ of member_order) {
+                const member_json = await _.json()
                 member_order_json.push(member_json)
             }
 
@@ -107,7 +113,6 @@ wsRouter.ws('/impostor/', async (ws, u, model_params, parameters, roomStorage) =
                 data: member_order_json
             })
             
-            
             roomStorage.setAttr("status", "inside_game")
             
             await ws.send_all({
@@ -116,7 +121,8 @@ wsRouter.ws('/impostor/', async (ws, u, model_params, parameters, roomStorage) =
                 type: "inside_game"
             })
 
-            roomStorage.setAttr("turn", 0)
+            roomStorage.setAttr("turn", "0") // We express it in form of a string because else its interpreted as an undefined
+
             const first_turn = member_order[0]
             await ws.send_all({
                 room: room_id
@@ -130,16 +136,83 @@ wsRouter.ws('/impostor/', async (ws, u, model_params, parameters, roomStorage) =
 
     ws.on("message", async (message) => {
         status = roomStorage.getAttr("status")
+        var game_status = roomStorage.getAttr("game_status", "relative_words")
         if (status != "inside_game") {
             ws.send({
                 type: "error",
-                data: "Cannot do that while not status is not inside_game"
+                data: "Cannot do that while status is not inside_game"
             })
             return
         }
 
-        if (message.type == "word") {
+        if (message.type == "relative_word") {
+            const data = message.data ? message.data.trim() : ""
+            if (game_status != "relative_words") {
+                ws.send({
+                    type: "error",
+                    data: "Cannot do that while game_status is not relative_words"
+                })
+                return
+            }
+
+            const turn = Number(roomStorage.getAttr("turn"))
+            const members = roomStorage.getAttr("members")
+            let member_index
+            members.map(( m, i )=> {
+                if (m.getAttr("user") == member.getAttr("user")) {
+                    member_index = i
+                }
+            })
+
+            if (member_index != turn) {
+                ws.send({
+                    type: "error",
+                    data: "It's not your turn"
+                })
+                return
+            }
+
+            if (data == "") {
+                ws.send({
+                    type: "error",
+                    data: "Not a valid relative_word"
+                })
+                return
+            }
+
+            await ws.send_all({
+                room: room_id
+            }, {
+                type: "relative_word",
+                data: {
+                    user: member.getAttr("user"), // User's id
+                    word: data
+                }
+            })
+
+            const next_turn = members[1+turn]
             
+            // Then all players have said a word, so we must move on to the next fase
+            if ( (1+turn) == members.length ) {
+                setTimeout(async () => {
+                    roomStorage.setAttr("game_status", "voting")
+                    await ws.send_all({
+                        room: room_id
+                    },{
+                        type: "start_voting"
+                    })
+                }, 2000)
+                return
+            }
+
+            roomStorage.setAttr("turn", String(1+turn))
+
+            await ws.send_all({
+                room: room_id
+            }, {
+                type: "turn",
+                data: next_turn.getAttr("user")
+            })
         }
     })
     

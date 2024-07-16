@@ -157,7 +157,7 @@ wsRouter.ws('/room/', async (ws, user, model_params, parameters, roomStorage) =>
                 type: "vote",
                 data: voted_game
             })
-        }
+        } // else -> "Error: Not valid type"
     });
     
     ws.on('close', async () => {
