@@ -1,7 +1,9 @@
+const { generate_random_integer } = require('./generators')
+
 function count_votes (votes) {
     const votes_keys = Object.keys(votes)
-    const random = Math.floor(Math.random() * votes_keys.length);
-    const random_key = votes_keys[random]
+    const random_integer = generate_random_integer(0, votes_keys.length)
+    const random_key = votes_keys[random_integer]
 
     var most_voted = votes[random_key]
     var votes_by_game = {}

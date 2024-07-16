@@ -24,4 +24,8 @@ function generate_hash (value) {
     });
 }
 
-module.exports = {generate_code, generate_uuid, generate_date_string, generate_hash}
+function generate_random_integer (from, to) {
+    return from + Math.floor(Math.random() * to);
+}
+
+module.exports = {generate_code, generate_uuid, generate_date_string, generate_hash, generate_random_integer }
