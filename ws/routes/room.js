@@ -111,7 +111,7 @@ wsRouter.ws('/room/', async (ws, user, model_params, parameters, roomStorage) =>
             await ws.for_all_clients({
                 room: room.json().code
             }, async (c) => {
-                const roommember = await RoomMember.objects_getBy("user", c.getAttr("user_id")) 
+                const roommember = await RoomMember.objects_getBy("user", c.getAttr("user")) 
                 await c.send({ 
                     type: "start_game",
                     data: {
@@ -219,7 +219,9 @@ wsRouter.ws('/room/', async (ws, user, model_params, parameters, roomStorage) =>
         return false
     },
     // We will use the room code as an identifier, as it is easier in this websocket
-    room_identifier: async (user, model_params, url_params) => url_params["code"]
+    room_identifier: async (user, model_params, url_params) => url_params["code"],
+    user_identifier: async (user, model_params, url_params) => await url_params.token
+
 })
 
 module.exports = wsRouter
