@@ -78,7 +78,7 @@ class WebSocketRouter {
      * ```
      */
     ws (path, handler, validatorOptions) {
-        const { required_parameters, model_parameters, auth, inner_logic_validation, room_identifier } = validatorOptions
+        const { required_parameters, model_parameters, auth, inner_logic_validation, room_identifier, user_identifier } = validatorOptions
         
         const handlerValidator = async (url, socket) => {
             const validator = new urlParamsValidator(url)
@@ -151,13 +151,11 @@ class WebSocketRouter {
 
             const wrappedWs = new WrappedWebSocket(ws, wss)
 
-            if (auth) {
-                wrappedWs.setAttr("user_id", user.json().id)
-            }
-
+            const user_identifier_value = await user_identifier(user, model_params, url_params)
             const room_identifier_value = await room_identifier(user, model_params, url_params)
 
             wrappedWs.setAttr("room", room_identifier_value)
+            wrappedWs.setAttr("user", user_identifier_value)
 
             if (!this._storages[room_identifier_value]) {
                 this._storages[room_identifier_value] = new Storage()
