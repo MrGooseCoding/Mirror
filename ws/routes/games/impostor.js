@@ -214,6 +214,67 @@ wsRouter.ws('/impostor/', async (ws, u, model_params, parameters, roomStorage) =
                 data: next_turn.getAttr("user")
             })
         }
+
+        if (message.type == "vote") {
+            const voted_user_id = message.data
+            if (roomStorage.getAttr("game_status") !== "voting") {
+                ws.send({
+                    type: "error",
+                    data: "You can only vote during voting game_status"
+                })
+                return
+            }
+            
+            const members = roomStorage.getAttr("members")
+            let member_index = -1
+            members.map(( m, i )=> {
+                if (m.getAttr("user") == voted_user_id) {
+                    member_index = i
+                }
+            })
+
+            if (member_index == -1) {
+                ws.send({
+                    type: "error",
+                    data:"Not a valid user id"
+                })
+                return
+            }
+            
+            var votes = roomStorage.getAttr("votes", {})
+            votes[member_json.id] = voted_user_id
+            roomStorage.setAttr("votes", votes)
+            var impostor = roomStorage.getAttr("impostor")
+            var impostor_json = await impostor.json()
+
+            const number_of_votes = Object.keys(votes).length
+            const member_count = members.length
+
+            if (number_of_votes == member_count) {
+                const {most_voted} = count_votes(votes)
+                await ws.send_all({
+                    room: room_id
+                }, { 
+                    type: "result",
+                    data: most_voted
+                })
+                const crew_wins = impostor.getAttr("user") == most_voted
+                setTimeout(async () => {
+                    await ws.send_all({
+                        room: room_id
+                    }, {
+                        type: "end",
+                        data: {
+                            message: `${impostor_json.display_name} was ${crew_wins ? '' : 'not '}the impostor`,
+                            winners: crew_wins ? "crew" : "impostor"
+                        }
+                    })
+                }, 5000)
+                return
+            }
+
+
+        } // else -> "Error: Not valid type"
     })
     
     // Once a member disconnects or is forced to disconnect, then the whole game is over
