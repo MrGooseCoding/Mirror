@@ -269,6 +269,7 @@ wsRouter.ws('/impostor/', async (ws, u, model_params, parameters, roomStorage) =
                             winners: crew_wins ? "crew" : "impostor"
                         }
                     })
+                    await ws.close()
                 }, 5000)
                 return
             }
