@@ -10,14 +10,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/MrGooseCoding/NodeAuth.git"
+    "url": "git+https://github.com/MrGooseCoding/Mirror.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/MrGooseCoding/NodeAuth/issues"
+    "url": "https://github.com/MrGooseCoding/Mirror/issues"
   },
-  "homepage": "https://github.com/MrGooseCoding/NodeAuth#readme",
+  "homepage": "https://github.com/MrGooseCoding/Mirror#readme",
   "devDependencies": {
     "chai": "^4.3.10",
     "mocha": "^10.2.0",
