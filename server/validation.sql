@@ -1,0 +1,11 @@
+BEGIN TRANSACTION;
+CREATE TABLE IF NOT EXISTS "validation" (
+	"id"	TEXT NOT NULL,
+	"type"	TEXT NOT NULL,
+	"user"	TEXT NOT NULL,
+	"code"	TEXT NOT NULL,
+	"expire_date"	TEXT NOT NULL,
+	FOREIGN KEY("user") REFERENCES "users"("id"),
+	PRIMARY KEY("id")
+);
+COMMIT;
