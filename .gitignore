@@ -1,3 +1,2 @@
-database.db
-node_modules
-private-config.js
+.gitignore
+webpage1
