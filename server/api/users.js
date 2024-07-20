@@ -8,7 +8,7 @@ const config = require('./../config')
 
 api('/search/', async (req, res, validator, user) => {
     if (!validator.not_null("username")) {
-        return res.status(400).json(validator.errors)
+        return res.status(400).json({ error: validator.errors })
     }
     
     const users = await User.objects_searchBy("username", validator.data.username, 10)
@@ -17,12 +17,12 @@ api('/search/', async (req, res, validator, user) => {
 }, router, userValidator)
 
 api('/getByToken/', (req, res, validator, user) => {
-    res.status(user.json() ? 200 : 400).json(user.json() ? user.json() : validator.errors)
+    res.status(user.json() ? 200 : 400).json(user.json() ? user.json() : { error: validator.errors })
 }, router, userValidator, true)
 
 api('/getById/', async (req, res, validator, user) => {
     if (!validator.not_null("id")) {
-        return res.status(400).json(validator.errors)
+        return res.status(400).json({ error: validator.errors })
     }
     
     const data = await User.objects_getBy("id", validator.data.id)
@@ -88,7 +88,7 @@ api('/update/:attrName/', async (req, res, validator, user) => {
 
 api('/login/', async (req, res, validator, user) => {
     if (!validator.not_null("username")) {
-        return res.status(400).json(validator.errors)
+        return res.status(400).json({ error: validator.errors })
     }
 
     if (user.json().validated == 0) {

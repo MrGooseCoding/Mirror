@@ -1,5 +1,6 @@
 const express = require('express');
 const http = require('http');
+const cors = require('cors')
 
 const config = require('./config.js')
 const api = require('./api/urls.js'); // Import the user routes
@@ -7,6 +8,7 @@ const WebSocketServer = require('./ws/server')
 
 const app = express();
 
+app.use(cors()) // just for testing
 app.use(express.json())
 app.use('/api', api);
 
