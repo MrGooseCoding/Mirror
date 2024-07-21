@@ -158,6 +158,58 @@ input[type="text"], input[type="password"] {
 
 }
 
+.NavBar {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: calc(100vh - 2 * $padding-small);
+
+    border-right: 2px solid $border-color;
+    
+    display: flex;
+    flex-direction: column;
+    padding: $padding-small;
+    gap: $padding-small;
+    
+    width: calc(40px + 2*$padding-small);
+    
+    overflow: hidden;
+    transition: 1s all;
+    
+    .item {
+        border-radius: $border-radius-small;
+        display: flex;
+        padding: $padding-small;
+        
+        &:hover {
+            background-color: $bg-color-2;
+        }
+
+        .name {
+            width: 0px;
+            overflow: hidden;
+            margin-top: auto;
+            margin-bottom: auto;
+        }
+
+        .icon {
+            background-color: $color-2;
+            width: 40px;
+            height: 40px;
+        }
+    }
+    
+    &:hover {
+        width: 40vw;
+    }
+
+    &:hover .item .name {
+        padding-left: $padding-small;
+        overflow: visible;
+        transition: 1s;
+    }
+}
+
 @media (max-width: 500px) {
     .Modal {
 

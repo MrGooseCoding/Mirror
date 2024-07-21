@@ -119,6 +119,48 @@ input[type=text]::placeholder, input[type=password]::placeholder {
   color: #c5bdaf;
 }
 
+.NavBar {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: calc(100vh - 2rem);
+  border-right: 2px solid #ECE2D0;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  gap: 1rem;
+  width: calc(40px + 2rem);
+  overflow: hidden;
+  transition: 1s all;
+}
+.NavBar .item {
+  border-radius: 0.7rem;
+  display: flex;
+  padding: 1rem;
+}
+.NavBar .item:hover {
+  background-color: #f0f0f0;
+}
+.NavBar .item .name {
+  width: 0px;
+  overflow: hidden;
+  margin-top: auto;
+  margin-bottom: auto;
+}
+.NavBar .item .icon {
+  background-color: #bb2222;
+  width: 40px;
+  height: 40px;
+}
+.NavBar:hover {
+  width: 40vw;
+}
+.NavBar:hover .item .name {
+  padding-left: 1rem;
+  overflow: visible;
+  transition: 1s;
+}
+
 @media (max-width: 500px) {
   .Modal {
     padding: 1rem;
