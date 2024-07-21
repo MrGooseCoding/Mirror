@@ -1,0 +1,193 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+$border-color: #ECE2D0;
+$bg-color-2: #f0f0f0;
+$font-color-2: #c5bdaf;
+
+$color-2-light: #f429298e;
+$color-2: #bb2222;
+$color-2-darker: #a21c1c;
+
+$padding-normal: 1.7rem;
+$padding-small: 1rem;
+
+$grid-gap-normal: 1rem;
+
+$border-radius-normal: 1rem;
+$border-radius-small: 0.7rem;
+
+$font-size: 40px;
+
+* {
+    font-family: "Poppins", sans-serif;
+    font-weight: $font-size;
+    font-size: large;
+}
+
+.center-horizontal {
+    left: 50%;
+    transform: translate(-50%, 0);
+}
+
+.center-vertical {
+    top: 50%;
+    transform: translate(0, -50%)
+}
+
+.center-horizontal.center-vertical {
+    transform: translate(-50%, -50%)
+}
+
+.Modal {
+    display: grid;
+    position: fixed;
+    
+    @extend .center-horizontal;
+    @extend .center-vertical;
+    
+    padding: $padding-normal;
+    border: 2px solid $border-color;
+    border-radius: $border-radius-normal;
+    width: 40vw;
+    max-width: 600px;
+    
+    row-gap: $grid-gap-normal;
+    
+    .title {
+        text-align: center;
+        font-size: xx-large;
+        font-weight: 800;
+        margin-bottom: 10px;
+    }
+}
+
+.error {
+    padding: $padding-small;
+    color: $color-2;
+}
+
+.Button {
+    margin-top: 10px;
+    .exterior {
+        border-radius: $border-radius-small;
+    }
+    
+    .interior {
+        background-color: yellow;
+        padding: $padding-small;
+        padding-top: $padding-small;
+        padding-bottom: $padding-small;
+        border-radius: $border-radius-small;
+        transform: translate(0, -10px);
+        transition: 0.6s;
+
+        &:hover {
+            transform: translate(0, 0);
+            
+        }
+        
+    }
+
+    &.red {
+        .exterior {
+            background-color: $color-2-darker;
+        }
+
+        .interior {
+            color: white;
+            background-color: $color-2;
+        }
+    }
+}
+
+.label {
+    padding: $padding-small;
+    padding-bottom: 0;
+    padding-top: 0;
+}
+
+
+
+.errorWrapper {
+    position: relative;
+    transition: 0s;
+    
+    .error {
+        position: relative;
+        z-index: 1;
+        margin-top: 0px;
+        transition: 0.1s;
+        
+        &.visible {
+            transition: 1s;
+            margin-top: calc($padding-small + $font-size );
+        }
+    }
+    
+    .inputWrapper {
+        position: absolute;
+        width: 100%;
+        display: flex;
+        z-index: 2;
+        
+    }
+    
+    &.errorActive {
+        transition: 0s;
+        background-color: $color-2-light;
+        border: 2px solid $color-2;
+        border-radius: $border-radius-small;
+    }
+}
+
+
+input[type="text"], input[type="password"] {
+    width: 100%;border-color: $color-2-darker;
+    border-width: 2px;
+    border: none;
+    display: block;
+    flex-grow: 1;
+    outline: none;
+    padding: $padding-small;
+    border-radius: $border-radius-small;
+    background-color: $bg-color-2;
+    
+    &::placeholder {
+        color: $font-color-2
+    }
+
+}
+
+@media (max-width: 500px) {
+    .Modal {
+
+        padding: $padding-small;
+        max-width: none;
+        left: 0px;
+        width: calc(100vw - 2 * $padding-small);
+        border: none;
+        transform: translate(0, -50%);
+    }
+    
+    /*.Button .interior {
+        transform: translate(0, 0);
+    }*/
+}
+
+@media (min-width: 500px) and (max-width: 750px) {
+    .Modal {
+        padding: $padding-small;
+        max-width: none;
+        width: 80vw;
+    }
+    
+    /*.Button .interior {
+        transform: translate(0, 0);
+    }*/
+}
+
+@media (min-width: 750px) and (max-width: 1000px) {
+    .center-horizontal {
+        width: 80vw;
+    }
+}
