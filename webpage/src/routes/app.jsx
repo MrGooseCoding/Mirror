@@ -10,8 +10,9 @@ function App() {
   return (
     <div>
         <NavBar items={[
-            ["", "Hallowww"],
-            ["", ""]
+            ["", "New Game"],
+            ["", "Join Game"],
+            ["", "Profile"]
         ]}/>
     </div>
   )
