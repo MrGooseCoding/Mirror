@@ -1,11 +1,11 @@
 import React from 'react';
 import { Route, createBrowserRouter, createRoutesFromElements, RouterProvider } from 'react-router-dom';
 import Login from './routes/login';
-import App from './routes/app';
-import JoinRoom from './routes/joinRoom'
-import CreateRoom from './routes/createRoom'
-import Room from './routes/room'
-import Profile from './routes/profile'
+import App from './routes/app/app';
+import JoinRoom from './routes/app/joinRoom'
+import CreateRoom from './routes/app/createRoom'
+import Room from './routes/app/room'
+import Profile from './routes/app/profile'
 
 const router = createBrowserRouter(
   createRoutesFromElements(
