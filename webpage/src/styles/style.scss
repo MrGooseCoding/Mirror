@@ -253,8 +253,34 @@ input[type="text"], input[type="password"] {
     }*/
 }
 
-@media (min-width: 750px) and (max-width: 1000px) {
-    .center-horizontal {
-        width: 80vw;
+@media (max-width: 1000px) {
+    .NavBar {
+        width: calc(100vw - 2*$padding-small);
+        border-top: 2px solid $border-color;
+        
+        border-right: unset;
+        flex-direction: row;
+        height: unset;
+        left: 0;
+        top: unset;
+        bottom: 0;
+
+        gap: 0px;
+        justify-content: space-evenly;
+
+        &:hover {
+            width: calc(100vw - 2 * $padding-small);
+        }
+        
+        &:hover .item .name {
+            padding-left: 0px;
+            
+            overflow: hidden;
+            transition: 1s;
+        }
+    }
+
+    .App {
+        margin-left: 0px;
     }
 }
