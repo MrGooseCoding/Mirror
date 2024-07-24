@@ -40,8 +40,6 @@ function Login() {
 
       const { token } = result
 
-      console.log(token)
-
       document.cookie = `token=${token}`
 
       navigate('/app')

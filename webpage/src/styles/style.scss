@@ -24,6 +24,11 @@ $font-size: 40px;
     font-size: large;
 }
 
+body {
+    padding: 0;
+    margin: 0;
+}
+
 .center-horizontal {
     left: 50%;
     transform: translate(-50%, 0);
@@ -40,7 +45,7 @@ $font-size: 40px;
 
 .Modal {
     display: grid;
-    position: fixed;
+    position: absolute;
     
     @extend .center-horizontal;
     @extend .center-vertical;
@@ -159,6 +164,7 @@ input[type="text"], input[type="password"] {
 }
 
 .NavBar {
+    background-color: white;
     position: absolute;
     left: 0;
     top: 0;
@@ -209,6 +215,14 @@ input[type="text"], input[type="password"] {
         overflow: visible;
         transition: 1s;
     }
+}
+
+.App {
+    margin: 0;
+    padding: 0;
+    position: relative;
+    height: 100vh;
+    margin-left: calc(40px + 4*$padding-small);
 }
 
 @media (max-width: 500px) {

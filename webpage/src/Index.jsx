@@ -2,18 +2,28 @@ import React from 'react';
 import { Route, createBrowserRouter, createRoutesFromElements, RouterProvider } from 'react-router-dom';
 import Login from './routes/login';
 import App from './routes/app';
+import JoinRoom from './routes/joinRoom'
+import CreateRoom from './routes/createRoom'
+import Room from './routes/room'
+import Profile from './routes/profile'
 
 const router = createBrowserRouter(
   createRoutesFromElements(
-    <Route path="/">
-      <Route path="/login" element={<Login />} />
-      <Route path="/app" element={<App />} />
+    <Route path="/" key='index'>
+      <Route path="/login" element={<Login />} key={'login'} />
+      <Route path="/app" element={<App />} key={'app'} 
+        children={[
+          <Route path="/app/joinRoom/" element={<JoinRoom/>} key={'joinRoom'}/>,
+          <Route path="/app/createRoom/" element={<CreateRoom/>} key={'createRoom'}/>,
+          <Route path="/app/room/:roomId" element={<Room/>} key={'room'}/>,
+          <Route path="/app/profile/" element={<Profile/>} key={'profile'}/>,
+          // <Route path="/app/game/" element={} />
+
+        ]}/>
     </Route>
   )
 )
 // <Route path="/register" element={} />
-// <Route path="/app/room/:roomID" element={} />
-// <Route path="/app/game/" element={} />
 // <Route path="/" element={} />
 
 // <Route index element={<Home />} />

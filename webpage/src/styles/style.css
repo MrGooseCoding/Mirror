@@ -5,6 +5,11 @@
   font-size: large;
 }
 
+body {
+  padding: 0;
+  margin: 0;
+}
+
 .center-horizontal, .Modal {
   left: 50%;
   transform: translate(-50%, 0);
@@ -21,7 +26,7 @@
 
 .Modal {
   display: grid;
-  position: fixed;
+  position: absolute;
   padding: 1.7rem;
   border: 2px solid #ECE2D0;
   border-radius: 1rem;
@@ -120,6 +125,7 @@ input[type=text]::placeholder, input[type=password]::placeholder {
 }
 
 .NavBar {
+  background-color: white;
   position: absolute;
   left: 0;
   top: 0;
@@ -160,6 +166,14 @@ input[type=text]::placeholder, input[type=password]::placeholder {
   padding-left: 1rem;
   overflow: visible;
   transition: 1s;
+}
+
+.App {
+  margin: 0;
+  padding: 0;
+  position: relative;
+  height: 100vh;
+  margin-left: calc(40px + 4rem);
 }
 
 @media (max-width: 500px) {
