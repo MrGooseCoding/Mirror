@@ -1,30 +1,17 @@
 import { useEffect, useState } from 'react'
-import './../styles/style.css'
+import '../../styles/style.css'
 import NavBar from '../../components/navBar'
 import Modal from '../../components/modal'
 import Input from '../../components/input'
 import Button from '../../components/button'
 import { useNavigate } from "react-router-dom";
 import { Outlet } from "react-router-dom";
+import { user_getByToken } from '../../server/api'
 
 function getCookie(name) {
   const value = `; ${document.cookie}`;
   const parts = value.split(`; ${name}=`);
   if (parts.length === 2) return parts.pop().split(';').shift();
-}
-
-async function getByToken(token) {
-  const data = fetch('http://localhost:3000/api/users/getByToken/', {
-    method: 'POST',
-    //mode: 'no-cors',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      token
-    })
-  })
-  return data
 }
 
 function App() {
@@ -37,10 +24,9 @@ function App() {
     var tokenCookie = getCookie("token")
 
     async function prepare(token) {
-      const data = await getByToken(token)
-      const result = await data.json()
+      const [ok, result] = await user_getByToken(token)
       
-      if (!data.ok) {
+      if (!ok) {
         // Go back to login
         navigate('/login')
         return
@@ -58,7 +44,7 @@ function App() {
   return (
     <div>
       <div className='App'>
-        <Outlet/>
+        <Outlet context={{token, user}}/>
       </div>
       <NavBar items={[
           ["", "Create Room", "/app/createRoom"],

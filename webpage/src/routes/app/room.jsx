@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import './../styles/style.css'
+import '../../styles/style.css'
 import NavBar from '../../components/navBar'
 import Modal from '../../components/modal'
 import Input from '../../components/input'

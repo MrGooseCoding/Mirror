@@ -4,6 +4,7 @@ import Modal from '../components/modal'
 import Input from '../components/input'
 import Button from '../components/button'
 import { useNavigate } from "react-router-dom";
+import { user_login } from '../server/api'
 
 function Login() {
   const [username, setUsername] = useState('')
@@ -14,39 +15,18 @@ function Login() {
 
 
   async function submitCallback() {
-    try {
-      const data = await fetch('http://localhost:3000/api/users/login/', {
-        method: 'POST',
-        //mode: 'no-cors',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          username,
-          password
-        })
-      })
-  
-      const result = await data.json()
-
-      if (!data.ok) {
-        setErrors(result["error"])
-        return
-      }
-
-      // Authenticated correctly.
-
-      // Saving token as cookie
-
-      const { token } = result
-
-      document.cookie = `token=${token}`
-
-      navigate('/app')
-
-    } catch (error) {
-      setErrors({general: error})
+    const [ok, result] = await user_login(username, password)
+    
+    if (!ok) {
+      setErrors(result["error"])
+      return
     }
+
+    const { token } = result
+
+    document.cookie = `token=${token}`
+
+    navigate('/app')
   }
 
   function usernameCallback(e) {
