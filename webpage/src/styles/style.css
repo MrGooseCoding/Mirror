@@ -41,11 +41,6 @@ body {
   margin-bottom: 10px;
 }
 
-.error {
-  padding: 1rem;
-  color: #bb2222;
-}
-
 .Button {
   margin-top: 10px;
 }
@@ -78,15 +73,33 @@ body {
   padding-top: 0;
 }
 
+.error {
+  color: #bb2222;
+  height: 0px;
+  transition: 1s height;
+  background-color: rgba(244, 41, 41, 0.5568627451);
+  border-radius: 0.7rem;
+}
+.error.visible {
+  border: 2px solid #bb2222;
+  padding: 1rem;
+  height: 40px;
+}
+
 .errorWrapper {
   position: relative;
   transition: 0s;
 }
 .errorWrapper .error {
+  padding: 1rem;
+  height: auto;
   position: relative;
   z-index: 1;
   margin-top: 0px;
   transition: 0.1s;
+  background-color: unset;
+  border: unset;
+  border-radius: unset;
 }
 .errorWrapper .error.visible {
   transition: 1s;

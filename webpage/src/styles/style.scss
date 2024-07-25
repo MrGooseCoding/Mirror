@@ -66,10 +66,6 @@ body {
     }
 }
 
-.error {
-    padding: $padding-small;
-    color: $color-2;
-}
 
 .Button {
     margin-top: 10px;
@@ -85,14 +81,14 @@ body {
         border-radius: $border-radius-small;
         transform: translate(0, -10px);
         transition: 0.6s;
-
+        
         &:hover {
             transform: translate(0, 0);
             
         }
         
     }
-
+    
     &.red {
         .exterior {
             background-color: $color-2-darker;
@@ -111,17 +107,34 @@ body {
     padding-top: 0;
 }
 
-
+.error {
+    color: $color-2;
+    height: 0px;
+    transition: 1s height;
+    background-color: $color-2-light;
+    border-radius: $border-radius-small;
+    
+    &.visible {
+        border: 2px solid $color-2;
+        padding: $padding-small;
+        height: $font-size;
+    }
+}
 
 .errorWrapper {
     position: relative;
     transition: 0s;
     
     .error {
+        padding: $padding-small;
+        height: auto;
         position: relative;
         z-index: 1;
         margin-top: 0px;
         transition: 0.1s;
+        background-color: unset;
+        border: unset;
+        border-radius: unset;
         
         &.visible {
             transition: 1s;
