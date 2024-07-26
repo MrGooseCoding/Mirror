@@ -1,11 +1,11 @@
 import { useState } from 'react'
 import './../styles/style.css'
 
-function Button({ text, color, onClick }) {
+function Button({ id, text, color, onClick }) {
   return (
     <div className={`Button ${color}`}>
         <div className='exterior'>
-            <div className='interior' onClick={onClick}>
+            <div className='interior' id={id} onClick={onClick}>
                 { text }  
             </div>
         </div>
