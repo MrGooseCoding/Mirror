@@ -6,7 +6,9 @@ function Modal({ title, children }) {
     <div className='Modal'>
       { title && <div className='title'>{title}</div> }
 
-      { children }
+      <div className="slidesWrapper">
+        { children }
+      </div>
     </div>
   )
 }
