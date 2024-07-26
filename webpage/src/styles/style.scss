@@ -2,6 +2,7 @@
 
 $border-color: #ECE2D0;
 $bg-color-2: #f0f0f0;
+$bg-color-2-darker: #e4e4e4;
 $font-color-2: #c5bdaf;
 
 $color-2-light: #f429298e;
@@ -174,6 +175,44 @@ input[type="text"], input[type="password"] {
         color: $font-color-2
     }
 
+}
+
+.container {
+    background-color: $bg-color-2; 
+    border-radius: $border-radius-small;
+    padding: $padding-small;
+}
+
+.memberContainer {
+    @extend .container;
+    transition: 1s;
+    gap: $padding-small;
+    flex-direction: column;
+    display: flex;
+
+    .member {
+        display: flex;
+
+        &.self {
+            .name {
+                font-weight: 600;
+            }
+        }
+
+        .name {
+            margin-top: auto;
+            margin-bottom: auto;
+
+        }
+
+        .icon {
+            margin-right: $padding-small;
+            height: 40px;
+            width: 40px;
+            background-color: $color-2;
+        }
+        
+    }
 }
 
 .NavBar {

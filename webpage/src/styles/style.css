@@ -137,6 +137,35 @@ input[type=text]::placeholder, input[type=password]::placeholder {
   color: #c5bdaf;
 }
 
+.container, .memberContainer {
+  background-color: #f0f0f0;
+  border-radius: 0.7rem;
+  padding: 1rem;
+}
+
+.memberContainer {
+  transition: 1s;
+  gap: 1rem;
+  flex-direction: column;
+  display: flex;
+}
+.memberContainer .member {
+  display: flex;
+}
+.memberContainer .member.self .name {
+  font-weight: 600;
+}
+.memberContainer .member .name {
+  margin-top: auto;
+  margin-bottom: auto;
+}
+.memberContainer .member .icon {
+  margin-right: 1rem;
+  height: 40px;
+  width: 40px;
+  background-color: #bb2222;
+}
+
 .NavBar {
   background-color: white;
   position: absolute;
