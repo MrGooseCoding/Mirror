@@ -37,9 +37,10 @@ function JoinRoom({}) {
   return (
     <div>
       <Modal title="Join Room">
-        <Input type="text" label="Room Code" placeholder="000000" onChange={roomCodeCallback} error={errors["error"]}/>
-
-        <Button text="Go!" color="red" onClick={submitCallback}/>
+        <div className="slide">
+          <Input type="text" label="Room Code" placeholder="000000" onChange={roomCodeCallback} error={errors["error"]}/>
+          <Button text="Go!" color="red" onClick={submitCallback}/>
+        </div>
       </Modal>
     </div>
   )

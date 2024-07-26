@@ -13,7 +13,7 @@ function Login() {
 
   const navigate = useNavigate()
 
-
+  
   async function submitCallback() {
     const [ok, result] = await user_login(username, password)
     
@@ -43,10 +43,11 @@ function Login() {
   return (
     <div>
       <Modal title = "Login">
-        <Input type="text" label="Username" placeholder="@yourcoolusername" onChange={usernameCallback} error={errors["username"]}/>
-
-        <Input type="password" label="Password" placeholder="keepItSecret123" onChange={passwordCallback} error={errors["password"]}/>
-        <Button text="Submit" color="red" onClick={submitCallback}/>
+        <div className="slide">
+          <Input type="text" label="Username" placeholder="@yourcoolusername" onChange={usernameCallback} error={errors["username"]}/>
+          <Input type="password" label="Password" placeholder="keepItSecret123" onChange={passwordCallback} error={errors["password"]}/>
+          <Button text="Submit" color="red" onClick={submitCallback}/>
+        </div>
       </Modal>
     </div>
   )

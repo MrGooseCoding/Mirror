@@ -35,8 +35,10 @@ function CreateRoom({}) {
   return (
     <div>
       <Modal title="Create Room">
-        <div className={`error ${errors["error"] ? 'visible' : ''}`}>{errors["error"]}</div>
-        <Button text="New" color="red" onClick={submitCallback}/>
+        <div className="slide">
+          <div className={`error ${errors["error"] ? 'visible' : ''}`}>{errors["error"]}</div>
+          <Button text="New" color="red" onClick={submitCallback}/>
+        </div>
       </Modal>
     </div>
   )
