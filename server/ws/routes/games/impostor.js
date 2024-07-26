@@ -319,7 +319,12 @@ wsRouter.ws('/impostor/', async (ws, u, model_params, parameters, roomStorage) =
     inner_logic_validation: async (user, model_params, url_params) => {
         // Check that the user has joined the correct game
         const member = model_params.roommember
+
+        assert(member["error"] == undefined)
+        
         const room = await Room.objects_getBy("id", member.getAttr("room"))
+        
+        assert(room["error"] == undefined)
 
         if (room.getAttr("game") !== 'impostor') {
             return "You have not joined your room's game"

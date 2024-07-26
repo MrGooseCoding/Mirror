@@ -4,6 +4,7 @@ const { games } = require('./../../config')
 const User = require('./../../models/user')
 const WebSocketRouter = require('../router');
 const { count_votes } = require('../../utils/other');
+const { assert } = require('chai');
 const wsRouter = new WebSocketRouter()
 
 /**
@@ -202,6 +203,9 @@ wsRouter.ws('/room/', async (ws, user, model_params, parameters, roomStorage) =>
     ],
     inner_logic_validation: async (user, model_params, url_params) => {
         const room = model_params["room"]
+        
+        assert(room["error"] == undefined)
+
         const member_count = await room.getMemberCount()
         if (member_count >= 8) {
             return "Party is full"
