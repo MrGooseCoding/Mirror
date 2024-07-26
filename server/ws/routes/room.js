@@ -5,6 +5,7 @@ const User = require('./../../models/user')
 const WebSocketRouter = require('../router');
 const { count_votes } = require('../../utils/other');
 const { assert } = require('chai');
+const { generate_random_integer } = require('../../utils/generators');
 const wsRouter = new WebSocketRouter()
 
 /**
@@ -165,7 +166,9 @@ wsRouter.ws('/room/', async (ws, user, model_params, parameters, roomStorage) =>
         await room.refresh()
         if (!room.is_game()) {
             await RoomMember.objects_deleteBy('user', user.json().id)
-            const member_count = await room.getMemberCount()
+            const members = await room.getMembers()
+            const member_count = members.length
+
             if (member_count === 0) {
                 roomStorage.empty()
                 Room.objects_deleteBy('id', room.json().id)
@@ -188,6 +191,22 @@ wsRouter.ws('/room/', async (ws, user, model_params, parameters, roomStorage) =>
                     type: "member_left",
                     data: member_json
                 })
+
+                if (is_admin) {
+                    const new_admin_index = generate_random_integer(0, member_count)
+                    const new_admin = members[new_admin_index]
+
+                    await room.change("admin", new_admin.getAttr("user"))
+                    await room.refresh()
+
+                    ws.send_all({
+                        room: room.json().code
+                    }, {
+                        type: "room",
+                        data: room.json()
+                    })
+                }
+
             }
         }
     });
