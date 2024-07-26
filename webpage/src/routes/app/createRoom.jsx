@@ -17,9 +17,7 @@ function CreateRoom({}) {
 
   async function submitCallback(e) {
     const [ ok, result ] = await room_create(token)
-
-    console.log(result)
-
+    
     if (!ok) {
       if (result.token) {
         navigate('/login')
