@@ -1,6 +1,6 @@
 const Room = require('./../../models/room')
 const RoomMember = require('./../../models/room_member')
-const { games } = require('./../../config')
+const { games, games_config } = require('./../../config')
 const User = require('./../../models/user')
 const WebSocketRouter = require('../router');
 const { count_votes } = require('../../utils/other');
@@ -71,6 +71,22 @@ wsRouter.ws('/room/', async (ws, user, model_params, parameters, roomStorage) =>
             }, { 
                 type: message.type,
             })
+
+            const player_count = await room.getMemberCount()
+
+            var availiable_games = games.filter((game, i, arr) => {
+                const { players } = games_config[game]
+                return players.from <= player_count && player_count <= players.to
+            })
+
+            roomStorage.setAttr("games", availiable_games)
+
+            ws.send_all({
+                room: room.json().code
+            }, { 
+                type: "games",
+                data: availiable_games
+            })
         }
         
         if (message.type == "start_game") {
@@ -101,7 +117,7 @@ wsRouter.ws('/room/', async (ws, user, model_params, parameters, roomStorage) =>
                     type: "error",
                     data: "Wait until every member has voted"
                 })
-                ws.close()
+                // ws.close()
                 return
             }
 
@@ -114,6 +130,9 @@ wsRouter.ws('/room/', async (ws, user, model_params, parameters, roomStorage) =>
                 room: room.json().code
             }, async (c) => {
                 const roommember = await RoomMember.objects_getBy("user", c.getAttr("user")) 
+
+                assert( roommember["error"] == undefined)
+
                 await c.send({ 
                     type: "start_game",
                     data: {
@@ -139,8 +158,10 @@ wsRouter.ws('/room/', async (ws, user, model_params, parameters, roomStorage) =>
                 ws.close()
                 return
             }
+
+            const availiable_games = roomStorage.getAttr("games", [])
             
-            if (!games.includes(voted_game)) {
+            if (!availiable_games.includes(voted_game)) {
                 ws.send({
                     type: "error",
                     data:"Not a valid game"
@@ -153,11 +174,13 @@ wsRouter.ws('/room/', async (ws, user, model_params, parameters, roomStorage) =>
             votes[member_json.id] = voted_game
             roomStorage.setAttr("votes", votes)
 
+            var {votes_by_game} = count_votes(votes)
+
             ws.send_all({
                 room: room.json().code
             }, { 
-                type: "vote",
-                data: voted_game
+                type: "votes",
+                data: votes_by_game
             })
         } // else -> "Error: Not valid type"
     });
