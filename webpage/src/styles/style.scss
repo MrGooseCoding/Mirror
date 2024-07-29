@@ -82,6 +82,24 @@ body {
     }
 }
 
+.screen {
+    position: relative;
+    display: none;
+    height: 100vh;
+
+    &.active {
+        display: block;
+    }
+    
+}
+
+.memberVoteContainer {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: $padding-small;
+    row-gap: $padding-small;
+}
+
 .gamesContainer {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -224,13 +242,48 @@ input[type="text"], input[type="password"] {
 }
 
 .container {
-    background-color: $bg-color-2; 
-    border-radius: $border-radius-small;
     padding: $padding-small;
+
+    &.flex {
+        display: flex;
+        width: 100%;
+        gap: $padding-small;
+    }
+
+    &.grey {
+        border-radius: $border-radius-small;
+        background-color: $bg-color-2; 
+    }
+}
+
+.messagesContainer {
+    @extend .container;
+    @extend .grey;
+    
+    display: flex;
+    flex-direction: column;
+    gap: $padding-small;
+
+}
+
+.gameInfoContainer {
+    @extend .container;
+    border-bottom: 2px solid $border-color;
+    display: flex;
+    flex-direction: column;
+    gap: $padding-small
+}
+
+.bottom {
+    z-index: 0;
+    position: absolute;
+    width: 100%;
+    bottom: 0px
 }
 
 .memberContainer {
     @extend .container;
+    @extend .grey;
     transition: 1s;
     gap: $padding-small;
     flex-direction: column;
@@ -376,6 +429,10 @@ input[type="text"], input[type="password"] {
             overflow: hidden;
             transition: 1s;
         }
+    }
+
+    .screen {
+        height: calc(100vh - 40px - 4 * $padding-small);
     }
 
     .App {

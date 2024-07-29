@@ -17,7 +17,7 @@ function Lobby({}) {
   var [ vote, setVote ] = useState('')
   var [ errors, setErrors ] = useState('')
 
-  const { token, user, setRedirectionKey } = useOutletContext()
+  const { token, user, setRedirectionKey, setGame } = useOutletContext()
   const navigate = useNavigate()
 
   const { pathname } = useLocation()
@@ -32,8 +32,6 @@ function Lobby({}) {
     const socket = new WebSocket(`ws://localhost:3000/ws/room/?code=${code}&token=${token}`)
 
     setWs(socket)
-
-    console.log("Hey")
 
     // Event listener for when the connection is opened
     socket.onopen = () => {
@@ -66,7 +64,8 @@ function Lobby({}) {
       }
 
       if (message.type === "start_game") {
-        setSlide(1)
+        setRedirectionKey(message.data.redirection_key)
+        setGame(message.data.game)
       }
       
       if (message.type === "games") {
@@ -79,6 +78,9 @@ function Lobby({}) {
 
       if (message.type === "error") {
         setErrors({error: message.data})
+        if (message.data === "Invalid code") {
+          navigate('/app')
+        }
       }
     }
 
@@ -89,7 +91,7 @@ function Lobby({}) {
 
     // Event listener for when the connection is closed
     socket.onclose = () => {
-      navigate('/app')
+      //navigate('/app')
     };
 
     // Clean up the WebSocket connection when the component unmounts
@@ -123,7 +125,7 @@ function Lobby({}) {
         <div className={`slide ${slide == 0 ? '' : 'hidden'}`}>
           <div>
             <div className='label'>Code</div>
-            <div className='container'>{code}</div>
+            <div className='container grey'>{code}</div>
           </div>
           <div>
             <div className='label'>Members</div>
