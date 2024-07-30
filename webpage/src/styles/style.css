@@ -170,10 +170,8 @@ body {
   border-radius: 0.7rem;
 }
 
-input[type=text], input[type=password] {
+input[type=text], input[type=password], textarea {
   width: 100%;
-  border-color: #a21c1c;
-  border-width: 2px;
   border: none;
   display: block;
   flex-grow: 1;
@@ -181,11 +179,12 @@ input[type=text], input[type=password] {
   padding: 1rem;
   border-radius: 0.7rem;
   background-color: #f0f0f0;
+  resize: none;
 }
-input[type=text]::-moz-placeholder, input[type=password]::-moz-placeholder {
+input[type=text]::-moz-placeholder, input[type=password]::-moz-placeholder, textarea::-moz-placeholder {
   color: #c5bdaf;
 }
-input[type=text]::placeholder, input[type=password]::placeholder {
+input[type=text]::placeholder, input[type=password]::placeholder, textarea::placeholder {
   color: #c5bdaf;
 }
 
@@ -194,8 +193,12 @@ input[type=text]::placeholder, input[type=password]::placeholder {
 }
 .container.flex, .flex.memberContainer, .flex.gameInfoContainer, .flex.messagesContainer {
   display: flex;
+  flex-direction: column;
   width: 100%;
   gap: 1rem;
+}
+.container.no-padding, .no-padding.memberContainer, .no-padding.gameInfoContainer, .no-padding.messagesContainer {
+  padding: 0px;
 }
 .container.grey, .memberContainer, .grey.gameInfoContainer, .messagesContainer {
   border-radius: 0.7rem;

@@ -9,9 +9,14 @@ import { useNavigate, useOutletContext } from "react-router-dom";
 function Profile({}) {
   
   const { token, user } = useOutletContext()
+
   return (
     <div>
-         {user.username}
+      <div className="container">
+        <b>{user.display_name}</b>
+        <div>@{user.username}</div>
+        <div className='container grey'>{user.description}</div>
+      </div>
     </div>
   )
 }

@@ -11,11 +11,13 @@ import Room from './routes/app/room/room'
 import RoomLobby from './routes/app/room/lobby'
 import ImpostorGame from './routes/app/room/game/impostor'
 import Profile from './routes/app/profile'
+import SignUp from './routes/signup';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" key='index'>
       <Route path="/login" element={<Login />} key={'login'} />
+      <Route path="/signup" element={<SignUp />} key={'login'} />
       <Route path="/app" element={<App />} key={'app'} 
         children={[
           <Route path="/app/joinRoom/" element={<JoinRoom/>} key={'joinRoom'}/>,

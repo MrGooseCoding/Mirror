@@ -223,10 +223,8 @@ body {
     }
 }
 
-
-input[type="text"], input[type="password"] {
-    width: 100%;border-color: $color-2-darker;
-    border-width: 2px;
+input[type="text"], input[type="password"], textarea {
+    width: 100%;
     border: none;
     display: block;
     flex-grow: 1;
@@ -234,6 +232,7 @@ input[type="text"], input[type="password"] {
     padding: $padding-small;
     border-radius: $border-radius-small;
     background-color: $bg-color-2;
+    resize: none;
     
     &::placeholder {
         color: $font-color-2
@@ -246,8 +245,13 @@ input[type="text"], input[type="password"] {
 
     &.flex {
         display: flex;
+        flex-direction: column;
         width: 100%;
         gap: $padding-small;
+    }
+
+    &.no-padding {
+        padding: 0px;
     }
 
     &.grey {

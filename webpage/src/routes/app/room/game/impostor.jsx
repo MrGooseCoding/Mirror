@@ -24,6 +24,10 @@ function Impostor({}) {
   var [ role, setRole ] = useState('')
 
   const { redirectionKey } = useOutletContext()
+
+  console.log(redirectionKey)
+
+  // const navigate = useNavigate()
   
   useEffect(() => {
     console.log(redirectionKey)
@@ -122,6 +126,7 @@ function Impostor({}) {
 
     // Event listener for when the connection is closed
     socket.onclose = () => {
+      console.log("Websocket connection closed")
       navigate('/app')
     };
 

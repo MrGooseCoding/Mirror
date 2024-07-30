@@ -18,6 +18,14 @@ async function user_getByToken(token) {
     })
 }
 
+async function user_create(display_name, username, password, description) {
+    return await fetchPOST('http://localhost:3000/api/users/create/', {
+        display_name,
+        username,
+        password,
+        description
+    })
+}
 async function user_login(username, password) {
     return await fetchPOST('http://localhost:3000/api/users/login/', {
         username,
@@ -37,4 +45,4 @@ async function room_canJoin(code, token) {
     })
 }
 
-export { user_getByToken, user_login, room_create, room_canJoin }
+export { user_getByToken, user_create, user_login, room_create, room_canJoin }
