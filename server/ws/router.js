@@ -79,17 +79,23 @@ class WebSocketRouter {
      */
     ws (path, handler, validatorOptions) {
         const { required_parameters, model_parameters, auth, inner_logic_validation, room_identifier, user_identifier } = validatorOptions
-
-        /**
-         * Performs basic-level validation. It checks that all required url parameters are provided, and (in case the ws requires authentication), that the token provided is correct
-         */
+        
         const handlerValidator = async (url, socket) => {
             const validator = new urlParamsValidator(url)
             await validator.format_data()
 
-            const all_required_parameters = validator.check_required_parameters(required_parameters)
+            const all_required_parameters = validator.check_required_parameters(required_parameters)            
             
-            if (!all_required_parameters) {
+            var model_parameters_valid = true
+            for await (let i of model_parameters) {
+                const valid = await validator.model_exists(i.param_name, i.database_name, i.model)
+                if (!valid) {
+                    model_parameters_valid = false
+                    break
+                }
+            }
+            
+            if (!all_required_parameters || !model_parameters_valid) {
                 socket.write('HTTP/1.1 400 Bad Request\r\n\r\n');
                 socket.destroy()
                 return false
@@ -109,7 +115,7 @@ class WebSocketRouter {
         }
 
         /**
-         * This function is meant to retrieve data from the database and give it as a model to the final ws function. It also performs more detailed and logical validation that cannot be automated (Like comparing two results, for instance), as well as model validation
+         * This function is meant to retrieve data from the database and give it as a model to the final ws function. It also performs more detailed and logical validation that cannot be automated (Like comparing two results, for instance)
         */
         const wrappedHandler = async (url, ws, wss) => {
             const validator = new urlParamsValidator(url)
@@ -117,38 +123,24 @@ class WebSocketRouter {
             
             const url_params = validator.data
             
-            const wrappedWs = new WrappedWebSocket(ws, wss)
-
-            // Parameters the ws requires
-            
-            var user = auth ? await User.objects_getBy("token", url_params.token) : undefined
+            var user;
+            if (auth) {
+                user = await User.objects_getBy("token", url_params.token)
+            } else {
+                user = undefined
+            }
             
             var model_params = {}
             
             for await (let i of model_parameters) {
-                const url_param_name = i.param_name
-                const url_param_value = validator.data[url_param_name]
-
                 const model = i.model
                 const model_name = model.name.toLowerCase()
                 const attrName = i.database_name
-
-                const model_obj = await model.objects_getBy(attrName, url_param_value)
-
-                // If some model parameters are incorrect, it returns an error and closes the ws
-                if( model_obj["error"] ) {
-                    wrappedWs.send({
-                        type: "error",
-                        data: `Invalid ${url_param_name}`
-                    })
-                    ws.close()
-                    return
-                }
-
+                const attrValue = validator.data[i.param_name]
+                const model_obj = await model.objects_getBy(attrName, attrValue)
                 model_params[model_name] = model_obj
             }
 
-            // Extra validation
             const error = await inner_logic_validation(user, model_params, url_params)
 
             if (error) {
@@ -157,7 +149,8 @@ class WebSocketRouter {
                 return
             }
 
-            // Useful to send specific messages to clients that have specific properties
+            const wrappedWs = new WrappedWebSocket(ws, wss)
+
             const user_identifier_value = await user_identifier(user, model_params, url_params)
             const room_identifier_value = await room_identifier(user, model_params, url_params)
 
