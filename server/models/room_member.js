@@ -15,19 +15,14 @@ class RoomMember extends Model {
         var formatted_data = {
             room: data.room.json().id,
             user: data.user.json().id,
-            redirection_key: generate_uuid(),
-            has_joined_game: 0
+            redirection_key: generate_uuid()
         }
 
-        return await this._create(formatted_data)
+        return await this._create(formatted_data, false)
     }
 
     getRedirectionKey() {
         return this.data.redirection_key
-    }
-
-    has_joined_game() {
-        return this.data.has_joined_game == 1
     }
 
     static async in_party(user) {

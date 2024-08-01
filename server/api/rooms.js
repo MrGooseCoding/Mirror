@@ -24,7 +24,7 @@ api('/create/', async (req, res, validator, user) => {
     return res.status(201).json(room.json())
 }, router, basicValidator, true)
 
-api('/canJoin/:code/', async (req, res, validator, user) => {
+api('/join/:code/', async (req, res, validator, user) => {
     const code = req.params.code
 
     if (isNaN(code)) {
@@ -47,7 +47,20 @@ api('/canJoin/:code/', async (req, res, validator, user) => {
         return res.status(400).json({ error: "User already in party"})
     }
     
-    return res.status(201).json({can_join: true})
+    await room.addMember(user)
+    
+    return res.status(201).json(room.json())
+}, router, basicValidator, true)
+
+api('/leave/', async (req, res, validator, user) => {
+    const in_party = await RoomMember.in_party(user)
+    if (!in_party) {
+        return res.status(400).json({ error: "Not in party"})
+    }
+    
+    await RoomMember.objects_deleteBy('user', user.json().id)
+    
+    return res.status(201).json({ status: `Exited room` })
 }, router, basicValidator, true)
 
 module.exports = router

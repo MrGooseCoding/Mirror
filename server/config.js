@@ -24,13 +24,9 @@ Thanks,
 
     games_config: {
         "impostor": {
-            "players": {
-                "from" : 2,
-                "to" : 8
-            },
             "topics": [
-                "hospitales",
-                "cosas amarillas"
+                "topic 1 here",
+                "topic 2 here"
             ]
             //"impostor_count"
         }

@@ -74,13 +74,7 @@ class Model {
         const db = database.open()
         const identifierAttr = { id: this.data.id }
         const new_data = await database.get(db, this.table, identifierAttr)
-
-        if (!new_data[0]) {
-            return false
-        }
-
         this.data = new_data[0]
-        return true
     }
 
     async delete () {
