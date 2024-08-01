@@ -5,6 +5,7 @@ const WebSocketRouter = require('./../../router');
 const { count_votes, shuffle_array } = require('./../../../utils/other');
 const { generate_random_integer } = require('./../../../utils/generators')
 const { games_config } = require('./../../../config')
+const assert = require('assert');
 
 const impostor_config = games_config.impostor
 
@@ -20,6 +21,8 @@ wsRouter.ws('/impostor/', async (ws, u, model_params, parameters, roomStorage) =
     const room_id = member.getAttr("room")
     const room = await Room.objects_getBy("id", room_id)
 
+    await member.change("has_joined_game", 1)
+
     // The ws of the first user who joins is going to run the logic. We'll name it "main"
 
     // This starts a 5 second countdown once the first member joins
@@ -30,7 +33,13 @@ wsRouter.ws('/impostor/', async (ws, u, model_params, parameters, roomStorage) =
     if (is_main) {
         roomStorage.setAttr("status", "joining_countdown")
         setTimeout(async () => {
-            await room.refresh()
+            const still_exists = await room.refresh()
+
+            if (!still_exists) {
+                ws.close()
+                return
+            }
+
             const member_count = await room.getMemberCount()
             const joined_count = await ws.count_all({
                 room: room_id
@@ -194,6 +203,11 @@ wsRouter.ws('/impostor/', async (ws, u, model_params, parameters, roomStorage) =
             
             // Then all players have said a word, so we must move on to the next fase
             if ( (1+turn) == members.length ) {
+                await ws.send_all({
+                    room: room_id
+                },{
+                    type: "end_round"
+                })
                 setTimeout(async () => {
                     roomStorage.setAttr("game_status", "voting")
                     await ws.send_all({
@@ -201,7 +215,7 @@ wsRouter.ws('/impostor/', async (ws, u, model_params, parameters, roomStorage) =
                     },{
                         type: "start_voting"
                     })
-                }, 2000)
+                }, 5000)
                 return
             }
 
@@ -251,11 +265,14 @@ wsRouter.ws('/impostor/', async (ws, u, model_params, parameters, roomStorage) =
             const member_count = members.length
 
             if (number_of_votes == member_count) {
+                roomStorage.setAttr("status", "finishing")
                 const {most_voted} = count_votes(votes)
+                const most_voted_user = members.filter(v => v.getAttr("user") == most_voted)[0]
+                const most_voted_user_json = await most_voted_user.json()
                 await ws.send_all({
                     room: room_id
                 }, { 
-                    type: "result",
+                    type: "most_voted",
                     data: most_voted
                 })
                 const crew_wins = impostor.getAttr("user") == most_voted
@@ -263,9 +280,9 @@ wsRouter.ws('/impostor/', async (ws, u, model_params, parameters, roomStorage) =
                     await ws.send_all({
                         room: room_id
                     }, {
-                        type: "end",
+                        type: "result",
                         data: {
-                            message: `${impostor_json.display_name} was ${crew_wins ? '' : 'not '}the impostor`,
+                            message: `${most_voted_user_json.display_name} was ${crew_wins ? '' : 'not '}the impostor`,
                             winners: crew_wins ? "crew" : "impostor"
                         }
                     })
@@ -280,8 +297,6 @@ wsRouter.ws('/impostor/', async (ws, u, model_params, parameters, roomStorage) =
     
     // Once a member disconnects or is forced to disconnect, then the whole game is over
     ws.on('close', async () => {
-        await room.refresh()
-        await RoomMember.objects_deleteBy('user', member_json.id)
         
         const joined_count = await ws.count_all({
             room: room_id
@@ -291,13 +306,14 @@ wsRouter.ws('/impostor/', async (ws, u, model_params, parameters, roomStorage) =
             type: "error",
             data: "Member left during game"
         })
+
+        await RoomMember.objects_deleteBy("room", room_id)
+        await Room.objects_deleteBy('id', room_id)
+        roomStorage.empty()
+        
         
         if (joined_count === 0) {
-            roomStorage.empty()
-            
             // Because some room members haven't joined, we must delete them manually
-            await RoomMember.objects_deleteBy("room", room_id)
-            await Room.objects_deleteBy('id', room_id)
             return
         }
 
