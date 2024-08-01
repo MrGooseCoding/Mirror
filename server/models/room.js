@@ -26,6 +26,7 @@ class Room extends Model {
         return await RoomMember.create({
             room: this,
             user: user,
+            voted: ""
         })
     }
 
