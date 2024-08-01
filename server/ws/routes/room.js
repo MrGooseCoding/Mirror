@@ -4,7 +4,7 @@ const { games, games_config } = require('./../../config')
 const User = require('./../../models/user')
 const WebSocketRouter = require('../router');
 const { count_votes } = require('../../utils/other');
-const { assert } = require('chai');
+const assert = require('assert');
 const { generate_random_integer } = require('../../utils/generators');
 const wsRouter = new WebSocketRouter()
 
@@ -22,6 +22,7 @@ wsRouter.ws('/room/', async (ws, user, model_params, parameters, roomStorage) =>
     }
 
     const room = model_params.room
+    const room_id = room.getAttr("id")
     const is_admin =  room.is_admin(user)
 
     ws.send({ type: "room", data: room.json() })
@@ -184,7 +185,17 @@ wsRouter.ws('/room/', async (ws, user, model_params, parameters, roomStorage) =>
     });
     
     ws.on('close', async () => {
-        await room.refresh()
+        const still_exists = await room.refresh()
+
+        // Something went wrong
+        if (!still_exists) {
+            await RoomMember.objects_deleteBy('room', room_id)
+            await ws.close_all({
+                room: room.json().code
+            })
+            return
+        }
+
         if (!room.is_game()) {
             await RoomMember.objects_deleteBy('user', user.json().id)
             const members = await room.getMembers()
@@ -244,8 +255,6 @@ wsRouter.ws('/room/', async (ws, user, model_params, parameters, roomStorage) =>
     inner_logic_validation: async (user, model_params, url_params) => {
         const room = model_params["room"]
         
-        assert(room["error"] == undefined)
-
         const member_count = await room.getMemberCount()
         if (member_count >= 8) {
             return "Party is full"
