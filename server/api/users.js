@@ -92,20 +92,20 @@ api('/login/', async (req, res, validator, user) => {
     }
 
     if (user.json().validated == 0) {
-        res.status(400).json({ error: "Not a validated user" })
+        res.status(400).json({ error: {"username": "Not a validated user"} })
         return
     }
 
     const is_unique = await validator.unique("username")
 
     if (is_unique) {
-        return res.status(400).json({"username": "username does belong to any user"})
+        return res.status(400).json({error: {"username": "username does belong to any user"}})
     }
 
     delete validator.errors["username"]
 
     const result = await User.authenticate(validator.data.username, req.body.password)
-    return res.status(!result["error"] ? 200: 400).json(!result["error"] ? result.json(true, false) : result["error"])
+    return res.status(!result["error"] ? 200: 400).json(!result["error"] ? result.json(true, false) : {error: {password: "Invalid password"}})
     
 }, router, userValidator)
 
