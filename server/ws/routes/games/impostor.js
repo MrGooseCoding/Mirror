@@ -5,8 +5,7 @@ const WebSocketRouter = require('./../../router');
 const { count_votes, shuffle_array } = require('./../../../utils/other');
 const { generate_random_integer } = require('./../../../utils/generators')
 const { games_config } = require('./../../../config')
-const assert = require('assert');
-
+const getConfig = require('./router_config')
 const impostor_config = games_config.impostor
 
 const wsRouter = new WebSocketRouter()
@@ -198,9 +197,11 @@ wsRouter.ws('/impostor/', async (ws, u, model_params, parameters, roomStorage) =
                     word: data
                 }
             })
-
+            
             const next_turn = members[1+turn]
             
+            roomStorage.setAttr("turn", String(1+turn))
+
             // Then all players have said a word, so we must move on to the next fase
             if ( (1+turn) == members.length ) {
                 await ws.send_all({
@@ -218,8 +219,6 @@ wsRouter.ws('/impostor/', async (ws, u, model_params, parameters, roomStorage) =
                 }, 5000)
                 return
             }
-
-            roomStorage.setAttr("turn", String(1+turn))
 
             await ws.send_all({
                 room: room_id
@@ -322,33 +321,6 @@ wsRouter.ws('/impostor/', async (ws, u, model_params, parameters, roomStorage) =
         })
     });
 
-}, {
-    required_parameters: ["key"],
-    auth: false,
-    model_parameters : [
-        {
-            "param_name": "key",
-            "database_name": "redirection_key",
-            "model": RoomMember
-        }
-    ],
-    inner_logic_validation: async (user, model_params, url_params) => {
-        // Check that the user has joined the correct game
-        const member = model_params.roommember
-
-        assert(member["error"] == undefined)
-        
-        const room = await Room.objects_getBy("id", member.getAttr("room"))
-        
-        assert(room["error"] == undefined)
-
-        if (room.getAttr("game") !== 'impostor') {
-            return "You have not joined your room's game"
-        }
-    },
-    // In this case we will use room id as the identifier
-    room_identifier: async (user, model_params, url_params) => await model_params.roommember.getAttr("room"),
-    user_identifier: async (user, model_params, url_params) => await url_params.key
-})
+}, getConfig("impostor"))
 
 module.exports = wsRouter
