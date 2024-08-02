@@ -20,6 +20,7 @@ Thanks,
     // The list of games allowed. You may remove or add games here
     games: [
         "impostor",
+        "hows_yours",
     ],
 
     games_config: {
@@ -29,8 +30,19 @@ Thanks,
                 "to" : 8
             },
             "topics": [
-                "hospitales",
-                "cosas amarillas"
+                "hospitals",
+                "yellow stuff"
+            ]
+            //"impostor_count"
+        },
+        "hows_yours": {
+            "players": {
+                "from" : 2,
+                "to" : 8
+            },
+            "topics": [
+                "phone",
+                "shoe"
             ]
             //"impostor_count"
         }
