@@ -11,6 +11,7 @@ $color-2-darker: #a21c1c;
 
 $padding-normal: 1.7rem;
 $padding-small: 1rem;
+$padding-x-small: 0.7rem;
 
 $grid-gap-normal: 1rem;
 
@@ -18,6 +19,7 @@ $border-radius-normal: 1rem;
 $border-radius-small: 0.7rem;
 
 $font-size: 40px;
+$title-font-size: xx-large;
 
 * {
     font-family: "Poppins", sans-serif;
@@ -28,6 +30,18 @@ $font-size: 40px;
 body {
     padding: 0;
     margin: 0;
+}
+
+.logo {
+    color: $color-2-darker;
+    width: min-content;
+
+    &.h-50 {
+        height: 50px;
+    }
+    &.h-100 {
+        height: 100px;
+    }
 }
 
 .center-horizontal {
@@ -76,7 +90,7 @@ body {
     
     .title {
         text-align: center;
-        font-size: xx-large;
+        font-size: $title-font-size;
         font-weight: 800;
         margin-bottom: 10px;
     }
@@ -162,6 +176,18 @@ body {
     &.selected {
         .interior {
             transform: translate(0, -5px);
+        }
+    }
+
+    &.no-transform {
+        .exterior {
+            width: max-content;        
+        }
+        margin-top: auto;
+        .interior {
+            width: max-content;
+            padding: $padding-x-small;
+            transform: translate(0, 0);
         }
     }
 }
@@ -278,11 +304,161 @@ input[type="text"], input[type="password"], textarea {
     gap: $padding-small
 }
 
+.top {
+    z-index:1;
+    position: fixed;
+    top: 0px;
+}
+
 .bottom {
     z-index: 0;
     position: absolute;
     width: 100%;
     bottom: 0px
+}
+
+.header {
+    //border-bottom: 2px solid $border-color;
+    background-color: white;
+    width: calc(100vw - 2* $padding-small);
+    max-width: calc(1000px - 2* $padding-small);
+    @extend .top;
+    padding: $padding-small;
+    display: flex;
+    justify-content: space-between;
+    
+    .items {
+        margin-left: 90px;
+        margin-right: 90px;
+        width: calc(100vw - 2 * 90px);
+        display: flex;
+        justify-content: space-between;
+
+        .item {
+            margin-top: auto;
+            margin-bottom: auto;
+
+            &:hover {
+                font-weight: 600;
+                color: $color-2-darker;
+            }
+        }
+    }
+}
+
+.mainWrapper {
+    align-items: center;
+    justify-content: center;
+    justify-items: center;
+    position: relative;
+}
+
+.main {
+    margin-left: auto;
+    margin-right: auto;
+    //max-width: 1000px;
+    display: flex;
+    flex-direction: column;
+    gap: $padding-normal;
+    margin-top: calc(2 * $padding-small + 50px + 2px)
+}
+
+
+.section {
+    border-radius: 20px;
+    margin: $padding-normal;
+    background-color: $bg-color-2;
+    padding: $padding-small;
+    display: flex;
+    gap: $padding-normal;
+    .info {
+        margin-top: auto;
+        margin-bottom: auto;
+        display: flex;
+        flex-direction: column;
+        .title {
+            line-height: 1.2;
+            text-align: center;
+            font-weight: 800;
+            font-size: $title-font-size;
+        }
+        
+        .text {
+            text-align: center;
+            
+        }
+
+    }
+    
+    .image {
+        border-radius: 20px;
+        background-color: $color-2;
+        width: 100%;
+        height: 200px;
+    }
+
+    &:nth-child(2) {
+        flex-direction: row-reverse;
+    }
+}
+
+.mainSection {
+    flex-direction: column;
+    position: relative;
+    margin: 0;
+    background-color: white;
+    @extend .section;
+    padding: 0px;
+    flex-direction: column;
+    
+    .info {
+        gap: $padding-normal;
+        padding-left: $padding-normal;
+        padding-right: $padding-normal;
+    }
+
+    .imageandlogo {
+        height: calc(40vh + 50px);
+        overflow: hidden;
+        .mainImage {
+            border-radius: 20px;
+            background-color: $color-2;
+            height: 40vh;
+        }
+
+        .mainLogo {
+            position: absolute;
+            padding: $padding-small;
+            background-color: white;
+            border-radius: 20px;
+            left: 50%;
+            transform: translate(-50%, -50%)
+        }
+
+        
+    }
+    
+    .Button {
+        margin-left: auto;
+        margin-right: auto;
+        .interior {
+            width: fit-content;
+        }
+        .exterior {
+            width: fit-content;
+        }
+    }
+}
+
+.sectionsContainer {
+    justify-content: center
+}
+
+.Landing {
+    position: relative;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 1000px;
 }
 
 .memberContainer {
@@ -320,7 +496,7 @@ input[type="text"], input[type="password"], textarea {
 
 .NavBar {
     background-color: white;
-    position: absolute;
+    position: fixed;
     left: 0;
     top: 0;
     height: calc(100vh - 2 * $padding-small);
@@ -402,6 +578,14 @@ input[type="text"], input[type="password"], textarea {
         max-width: none;
         width: 80vw;
     }
+
+    .section {
+        flex-direction: column;
+
+        &:nth-child(2) {
+            flex-direction: column;
+        }
+    }
     
     /*.Button .interior {
         transform: translate(0, 0);
@@ -441,5 +625,6 @@ input[type="text"], input[type="password"], textarea {
 
     .App {
         margin-left: 0px;
+        // height: calc(100vh - ( 40px + 4 * $padding-small ) );
     }
 }

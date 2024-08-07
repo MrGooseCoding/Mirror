@@ -6,14 +6,12 @@ import Button from '../../../../components/button'
 //import { RoomWebsocket } from '../../server/ws'
 import { useOutletContext, useLocation, useNavigate } from "react-router-dom";
 
-function Impostor({}) {
+function Hows_yours({}) {
   var [ ws, setWs ] = useState()
   var [ status, setStatus ] = useState("")
   var [ topic, setTopic ] = useState("")
   var [ members, setMembers ] = useState([])
   var [ turn, setTurn ] = useState("")
-  var [ vote, setVote ] = useState("")
-  var [ mostVoted, setMostVoted ] = useState("")
   var [ messages, setMessages ] = useState([])
   var [ resultMessages, setResultMessages ] = useState([])
 
@@ -23,20 +21,17 @@ function Impostor({}) {
 
   var [ role, setRole ] = useState('')
 
-  const { redirectionKey } = useOutletContext()
-
-  console.log(redirectionKey)
+  const { user, redirectionKey } = useOutletContext()
 
   // const navigate = useNavigate()
   
   useEffect(() => {
-    console.log(redirectionKey)
     if (!redirectionKey) {
       return
     }
 
-    //const socket = new WebSocket(`ws://${window.location.host}/ws/game/impostor/?key=${redirectionKey}`)
-    const socket = new WebSocket(`ws://localhost:3000/ws/game/impostor/?key=${redirectionKey}`)
+    //const socket = new WebSocket(`ws://${window.location.host}/ws/game/hows_yours/?key=${redirectionKey}`)
+    const socket = new WebSocket(`ws://localhost:3000/ws/game/hows_yours/?key=${redirectionKey}`)
 
     setWs(socket)
 
@@ -47,74 +42,75 @@ function Impostor({}) {
 
     // Event listener for incoming messages
     socket.onmessage = (e) => {
-      const message = JSON.parse(e.data)
-      console.log(message)
+        const message = JSON.parse(e.data)
+        console.log(message)
 
-      if (message.type == "role") {
-        setRole(message.data)
-      }
+        if (message.type == "guesser") {
+            setRole(message.data == user.id ? "guesser" : "crew")
+        }
 
-      if (message.type == "topic") {
-        setTopic(message.data)
-      }
+        if (message.type == "topic") {
+            setTopic(message.data)
+        }
 
-      if (message.type == "inside_game") {
-        setStatus("inside_game")
-      }
+        if (message.type == "inside_game") {
+            setStatus("inside_game")
+        }
 
-      if (message.type == "start_voting") {
-        setStatus("voting")
-      }
+        if (message.type == "guessing") {
+            setStatus("guessing")
+            setResultMessages([{
+                type: "start_guessing",
+                data: `Time to guess!`
+            }])
+        }
 
-      if (message.type == "member_order") {
-        setMembers(message.data)
-      }
+        if (message.type == "member_order") {
+            setMembers(message.data)
+        }
 
-      if (message.type == "turn") {
-        setMessages((prev) => {
-          var all_messages = [...prev]
-          all_messages.push(message)
-          return all_messages
-        })
-        setTurn(message.data)
-      }
+        if (message.type == "turn") {
+            setMessages((prev) => {
+                var all_messages = [...prev]
+                all_messages.push(message)
+                return all_messages
+            })
+            setTurn(message.data)
+        }
 
-      if (message.type == "relative_word") {
-        setMessages((prev) => {
-          var all_messages = [...prev]
-          all_messages.push(message)
-          return all_messages
-        })
-      }
+        if (message.type == "property") {
+            setMessages((prev) => {
+                var all_messages = [...prev]
+                all_messages.push(message)
+                return all_messages
+            })
+        }
 
-      if (message.type == "result") {
-        setResultMessages([
-          {
-            type: "message",
-            data: message.data.message
-          },
-          {
-            type: "winners",
-            data: `${message.data.winners} wins`
-          }
-        ])
-      }
+        if (message.type == "result") {
+            setResultMessages((prev) => [
+                ...prev,
+                {
+                    type: "message",
+                    data: message.data.message
+                },
+                {
+                    type: "winners",
+                    data: `${message.data.winners} wins`
+                }
+            ])
+        }
 
-      if (message.type == "end_round") {
-        setMessages((prev) => {
-          var all_messages = [...prev]
-          all_messages.push(message)
-          return all_messages
-        })
-      }
+        if (message.type == "end_round") {
+            setMessages((prev) => {
+                var all_messages = [...prev]
+                all_messages.push(message)
+                return all_messages
+            })
+        }
 
-      if (message.type == "most_voted") {
-        setMostVoted(message.data)
-      }
-
-      if (message.type == "error") {
-        setErrors({ error: message.data })
-      }
+        if (message.type == "error") {
+            setErrors({ error: message.data })
+        }
 
     }
 
@@ -151,16 +147,8 @@ function Impostor({}) {
   function onWordInputSubmit (e) {
     e.preventDefault()
     sendMessage({
-      type: "relative_word",
+      type: role == "crew" ? "property" : "guess",
       data: word
-    })
-  };
-  
-  function onVoteMemberButtonClick (id) {
-    setVote(id)
-    sendMessage({
-      type: "vote",
-      data: id
     })
   };
 
@@ -196,10 +184,10 @@ function Impostor({}) {
                     Its {member.display_name}'s turn
                   </div>
                 }
-                if (v.type == "relative_word") {
+                if (v.type == "property") {
                   const member = members.filter(m => v.data.user == m.id)[0]
                   return <div className='message' key={`word_${v.data.user}`}>
-                    {member.display_name} said {v.data.word}
+                    Hows yours? {member.display_name}'s is {v.data.property}
                   </div>
                 }
                 if (v.type == "end_round") {
@@ -211,14 +199,16 @@ function Impostor({}) {
             }
           </div>
         </div>
-        <div className="bottom">
-          <form className="container" onSubmit={onWordInputSubmit}>
-            <Input type="text" placeholder="Type your word..." error={errors["error"]} onChange={onWordInputChange}/>
-          </form>
-        </div>
+        {
+            role == "crew" && <div className="bottom">
+                <form className="container" onSubmit={onWordInputSubmit}>
+                    <Input type="text" placeholder="Mine is..." error={errors["error"]} onChange={onWordInputChange}/>
+                </form>
+            </div>
+        }
       </div>
 
-      <div className={`screen ${status == "voting" ? 'active' : ''}`}>
+      <div className={`screen ${status == "guessing" ? 'active' : ''}`}>
         <div className = "gameInfoContainer">
           <div>
             <div className="label">Role: </div>
@@ -232,24 +222,6 @@ function Impostor({}) {
           }
         </div>
         <div className='container'>
-          <div className='label'>Vote for a member</div>
-          <div className='memberVoteContainer'>
-            {
-              members.map((v, i, arr) => {
-                return <div>
-                  <Button color="grey" selected={vote == v.id} onClick={
-                    () => onVoteMemberButtonClick(v.id)
-                  }> {v.display_name} </Button>
-                </div>
-              })
-            }
-          </div>
-          <div className="label">Most voted:</div>
-          <div className="container grey">
-            {
-              mostVoted ? members.filter(v => v.id == mostVoted)[0].display_name : '...'
-            }
-          </div>
           <div className="label">Result: </div>
           <div className="container grey">
           {
@@ -261,10 +233,17 @@ function Impostor({}) {
           }
           </div>
         </div>
+        {
+            role == "guesser" && <div className="bottom">
+                <form className="container" onSubmit={onWordInputSubmit}>
+                    <Input type="text" placeholder="Make your guess" error={errors["error"]} onChange={onWordInputChange}/>
+                </form>
+            </div>
+        }
       </div>
 
     </div>
   )
 }
 
-export default Impostor
+export default Hows_yours

@@ -10,12 +10,15 @@ import CreateRoom from './routes/app/createRoom'
 import Room from './routes/app/room/room'
 import RoomLobby from './routes/app/room/lobby'
 import ImpostorGame from './routes/app/room/game/impostor'
+import Hows_yoursGame from './routes/app/room/game/hows_yours'
 import Profile from './routes/app/profile'
 import SignUp from './routes/signup';
+import Landing from './routes/landing';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" key='index'>
+      <Route path="/" element={<Landing />} key={'landing'} />
       <Route path="/login" element={<Login />} key={'login'} />
       <Route path="/signup" element={<SignUp />} key={'login'} />
       <Route path="/app" element={<App />} key={'app'} 
@@ -25,7 +28,8 @@ const router = createBrowserRouter(
           <Route path="/app/room/" element={<Room />} key={'room'} 
             children={[
               <Route path="/app/room/:roomId" element={<RoomLobby />} key={'roomLobby'}/>,
-              <Route path="/app/room/game/impostor" element={<ImpostorGame />} key={'impostorGame'}/>
+              <Route path="/app/room/game/impostor" element={<ImpostorGame />} key={'impostorGame'}/>,
+              <Route path="/app/room/game/hows_yours" element={<Hows_yoursGame />} key={'hows_yoursGame'}/>
             
             ]}/>,
           <Route path="/app/profile/" element={<Profile/>} key={'profile'}/>,

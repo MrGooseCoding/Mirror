@@ -10,6 +10,18 @@ body {
   margin: 0;
 }
 
+.logo {
+  color: #a21c1c;
+  width: -moz-min-content;
+  width: min-content;
+}
+.logo.h-50 {
+  height: 50px;
+}
+.logo.h-100 {
+  height: 100px;
+}
+
 .center-horizontal, .Modal {
   left: 50%;
   transform: translate(-50%, 0);
@@ -118,6 +130,19 @@ body {
 .Button.selected .interior {
   transform: translate(0, -5px);
 }
+.Button.no-transform {
+  margin-top: auto;
+}
+.Button.no-transform .exterior {
+  width: -moz-max-content;
+  width: max-content;
+}
+.Button.no-transform .interior {
+  width: -moz-max-content;
+  width: max-content;
+  padding: 0.7rem;
+  transform: translate(0, 0);
+}
 
 .label {
   padding: 1rem;
@@ -218,11 +243,144 @@ input[type=text]::placeholder, input[type=password]::placeholder, textarea::plac
   gap: 1rem;
 }
 
+.top, .header {
+  z-index: 1;
+  position: fixed;
+  top: 0px;
+}
+
 .bottom {
   z-index: 0;
   position: absolute;
   width: 100%;
   bottom: 0px;
+}
+
+.header {
+  background-color: white;
+  width: calc(100vw - 2rem);
+  max-width: calc(1000px - 2rem);
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+}
+.header .items {
+  margin-left: 90px;
+  margin-right: 90px;
+  width: calc(100vw - 180px);
+  display: flex;
+  justify-content: space-between;
+}
+.header .items .item {
+  margin-top: auto;
+  margin-bottom: auto;
+}
+.header .items .item:hover {
+  font-weight: 600;
+  color: #a21c1c;
+}
+
+.mainWrapper {
+  align-items: center;
+  justify-content: center;
+  justify-items: center;
+  position: relative;
+}
+
+.main {
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.7rem;
+  margin-top: calc(2rem + 50px + 2px);
+}
+
+.section, .mainSection {
+  border-radius: 20px;
+  margin: 1.7rem;
+  background-color: #f0f0f0;
+  padding: 1rem;
+  display: flex;
+  gap: 1.7rem;
+}
+.section .info, .mainSection .info {
+  margin-top: auto;
+  margin-bottom: auto;
+  display: flex;
+  flex-direction: column;
+}
+.section .info .title, .mainSection .info .title {
+  line-height: 1.2;
+  text-align: center;
+  font-weight: 800;
+  font-size: xx-large;
+}
+.section .info .text, .mainSection .info .text {
+  text-align: center;
+}
+.section .image, .mainSection .image {
+  border-radius: 20px;
+  background-color: #bb2222;
+  width: 100%;
+  height: 200px;
+}
+.section:nth-child(2), .mainSection:nth-child(2) {
+  flex-direction: row-reverse;
+}
+
+.mainSection {
+  flex-direction: column;
+  position: relative;
+  margin: 0;
+  background-color: white;
+  padding: 0px;
+  flex-direction: column;
+}
+.mainSection .info {
+  gap: 1.7rem;
+  padding-left: 1.7rem;
+  padding-right: 1.7rem;
+}
+.mainSection .imageandlogo {
+  height: calc(40vh + 50px);
+  overflow: hidden;
+}
+.mainSection .imageandlogo .mainImage {
+  border-radius: 20px;
+  background-color: #bb2222;
+  height: 40vh;
+}
+.mainSection .imageandlogo .mainLogo {
+  position: absolute;
+  padding: 1rem;
+  background-color: white;
+  border-radius: 20px;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.mainSection .Button {
+  margin-left: auto;
+  margin-right: auto;
+}
+.mainSection .Button .interior {
+  width: -moz-fit-content;
+  width: fit-content;
+}
+.mainSection .Button .exterior {
+  width: -moz-fit-content;
+  width: fit-content;
+}
+
+.sectionsContainer {
+  justify-content: center;
+}
+
+.Landing {
+  position: relative;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 1000px;
 }
 
 .memberContainer {
@@ -250,7 +408,7 @@ input[type=text]::placeholder, input[type=password]::placeholder, textarea::plac
 
 .NavBar {
   background-color: white;
-  position: absolute;
+  position: fixed;
   left: 0;
   top: 0;
   height: calc(100vh - 2rem);
@@ -318,6 +476,12 @@ input[type=text]::placeholder, input[type=password]::placeholder, textarea::plac
     padding: 1rem;
     max-width: none;
     width: 80vw;
+  }
+  .section, .mainSection {
+    flex-direction: column;
+  }
+  .section:nth-child(2), .mainSection:nth-child(2) {
+    flex-direction: column;
   }
   /*.Button .interior {
       transform: translate(0, 0);
