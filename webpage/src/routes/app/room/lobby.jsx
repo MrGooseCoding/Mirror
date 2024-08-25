@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import '../../../styles/style.css'
 import NavBar from '../../../components/navBar'
+import Icon from '../../../components/icon'
 import Modal from '../../../components/modal'
 import Input from '../../../components/input'
 import Button from '../../../components/button'
@@ -133,7 +134,7 @@ function Lobby({}) {
               {
                 members.map((v, i, arr) => {
                   return <div className={`member ${v.id == user.id ? 'self' : ''}`} key={v.id}>
-                    <div className='icon'></div>
+                    <Icon name="person-outline" className="icon"></Icon>
                     <div className= "name">{v.display_name}</div>
                   </div>
                 })
