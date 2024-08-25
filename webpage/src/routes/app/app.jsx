@@ -48,9 +48,9 @@ function App() {
         <Outlet context={{token, user}}/>
       </div>
       <NavBar items={[
-          ["", "Create Room", "/app/createRoom"],
-          ["", "Join Room", "/app/joinRoom"],
-          ["", "Profile", "/app/profile"]
+          ["add-circle", "Create Room", "/app/createRoom"],
+          ["join", "Join Room", "/app/joinRoom"],
+          ["person", "Profile", "/app/profile"]
       ]}/>
     </div>
   )
