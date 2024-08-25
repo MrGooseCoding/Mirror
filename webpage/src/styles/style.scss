@@ -81,7 +81,8 @@ body {
             display: grid;
             row-gap: $grid-gap-normal;
             transition: 1s all ease-in;
-            max-height: 400px;
+            //max-height: 400px;
+            overflow: auto;
 
             &.hidden {
                 max-height: 0px;
@@ -367,14 +368,16 @@ input[type="text"], input[type="password"], textarea {
 
 .section {
     border-radius: 20px;
+    position: relative;
     margin: $padding-normal;
     background-color: $bg-color-2;
     padding: $padding-small;
+    align-items: center;
     display: flex;
     gap: $padding-normal;
+    
     .info {
-        margin-top: auto;
-        margin-bottom: auto;
+        flex: 1;
         display: flex;
         flex-direction: column;
         .title {
@@ -383,7 +386,7 @@ input[type="text"], input[type="password"], textarea {
             font-weight: 800;
             font-size: $title-font-size;
         }
-        
+
         .text {
             text-align: center;
             
@@ -391,12 +394,12 @@ input[type="text"], input[type="password"], textarea {
 
     }
     
-    .image {
+    .media {
         border-radius: 20px;
-        background-color: $color-2;
-        width: 100%;
-        height: 200px;
-    }
+        height: 250px;
+        background-color: white;
+        flex: 2;
+    }    
 
     &:nth-child(2) {
         flex-direction: row-reverse;
@@ -419,11 +422,12 @@ input[type="text"], input[type="password"], textarea {
     }
 
     .imageandlogo {
+        width: 100%;
         height: calc(40vh + 50px);
         overflow: hidden;
         .mainImage {
-            border-radius: 20px;
             background-color: $color-2;
+            border-radius: 20px;
             height: 40vh;
         }
 
@@ -468,6 +472,7 @@ input[type="text"], input[type="password"], textarea {
     transition: 1s;
     gap: $padding-small;
     flex-direction: column;
+    overflow-y: auto;
     display: flex;
 
     .member {
@@ -489,7 +494,6 @@ input[type="text"], input[type="password"], textarea {
             margin-right: $padding-small;
             height: 40px;
             width: 40px;
-            background-color: $color-2;
         }
         
     }
@@ -532,7 +536,7 @@ input[type="text"], input[type="password"], textarea {
         }
         
         .icon {
-            background-color: $color-2;
+            // color: $color-2;
             width: 40px;
             height: 40px;
         }
@@ -568,6 +572,17 @@ input[type="text"], input[type="password"], textarea {
         transform: translate(0, -50%);
     }
     
+    .section {
+        flex-direction: column;
+        
+        &:nth-child(2) {
+            flex-direction: column;
+        }
+
+        .media {
+            width: 100%;
+        }
+    }
     /*.Button .interior {
         transform: translate(0, 0);
     }*/
@@ -579,15 +594,18 @@ input[type="text"], input[type="password"], textarea {
         max-width: none;
         width: 80vw;
     }
-
+    
     .section {
         flex-direction: column;
-
+    
         &:nth-child(2) {
             flex-direction: column;
         }
+
+        .media {
+            width: 100%;
+        }
     }
-    
     /*.Button .interior {
         transform: translate(0, 0);
     }*/
@@ -610,6 +628,12 @@ input[type="text"], input[type="password"], textarea {
 
         &:hover {
             width: calc(100vw - 2 * $padding-small);
+        }
+
+        .item {
+            &:hover {
+                background-color: unset;
+            }
         }
         
         &:hover .item .name {
