@@ -2,6 +2,7 @@
 
 $border-color: #ECE2D0;
 $bg-color-2: #f0f0f0;
+$bg-color-2-transparent: rgba(240, 240, 240, 0.605);
 $bg-color-2-darker: #e4e4e4;
 $font-color-2: #c5bdaf;
 
@@ -59,8 +60,18 @@ body {
     transform: translate(-50%, -50%)
 }
 
+.disable-outside-clicks {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 10;
+}
+
 .Modal {
     position: absolute;
+    background-color: white;
     
     @extend .center-horizontal;
     @extend .center-vertical;
@@ -72,7 +83,30 @@ body {
     max-width: 600px;
     
     //row-gap: $grid-gap-normal;
-    
+
+    .top {
+        position: static;
+        display: flex;
+        margin-bottom: 10px;
+        
+        .icon {
+            position: relative;
+            height: 40px;
+            margin-top: auto;
+            margin-bottom: auto;
+            margin-left: auto;
+        }
+    }
+
+    &.hidden {
+        opacity: 0;
+    }
+
+    &.dominant { // TODO: Box shadow and avoid other clicks
+        z-index: 20;
+        box-shadow: 0px 0px 1px 5000px $bg-color-2-transparent;
+    }
+
     .slidesWrapper {
         overflow: hidden;
         
@@ -94,7 +128,60 @@ body {
         text-align: center;
         font-size: $title-font-size;
         font-weight: 800;
-        margin-bottom: 10px;
+        margin-bottom: 0;
+    }
+}
+
+.title {
+    width: 100%;
+    font-size: $title-font-size;
+    font-weight: 800;
+    margin-bottom: 10px;
+
+}
+
+.Shrinkable {
+    .title {
+        margin-top: auto;
+        border-bottom: 2px solid $border-color;
+        display: flex;
+
+        div {
+           font-size: inherit; 
+        }
+
+        .icon {
+            margin-top: auto;
+            margin-bottom: auto;
+            height: 40px;
+            transform: rotate(90deg);
+            transition: 0.5s;
+            
+            &.shrinked {
+                transform: rotate(0);
+            }
+        }
+    }
+
+    .content {
+        overflow: hidden;
+        max-height: 4000px;
+        padding-left: 40px;
+        padding-right: 40px;
+        //transition: 10s;
+        
+        &.shrinked {
+            //transition: 1s;
+            max-height: 0;
+        }
+    }
+
+    .Shrinkable {
+        .title {
+            font-family: "Poppins", sans-serif;
+            font-weight: 500;
+            font-size: large;
+        }
     }
 }
 
@@ -319,7 +406,7 @@ input[type="text"], input[type="password"], textarea {
     bottom: 0px
 }
 
-.header {
+.Header {
     //border-bottom: 2px solid $border-color;
     background-color: white;
     width: calc(100vw - 2* $padding-small);
@@ -328,7 +415,22 @@ input[type="text"], input[type="password"], textarea {
     padding: $padding-small;
     display: flex;
     justify-content: space-between;
+    z-index: 3;
+
+    .logoContainer {
+        height: 50px;
+    }
     
+    .menuBtnContainer {
+        display: none;
+        height: 50px;
+        width: 50px;
+
+        .menuBtn {
+            height: inherit;
+        }
+    }
+
     .items {
         margin-left: 90px;
         margin-right: 90px;
@@ -348,6 +450,35 @@ input[type="text"], input[type="password"], textarea {
     }
 }
 
+.sideBar {
+    display: none;
+    margin-top: -100vh;
+    top: 0;
+    left: 0;
+    background-color: white;
+    border-bottom-left-radius: $border-radius-normal;
+    border-bottom-right-radius: $border-radius-normal;
+    position: fixed;
+    width: calc(100vw - 2 * $padding-small);
+    transition: 1s margin-top;
+    z-index: 2;
+    padding: $padding-small;
+    flex-direction: column;
+    border: 2px solid $border-color;
+    
+    .item {
+        padding: $padding-small;
+        border-radius: $border-radius-small;
+        &:hover {
+            background-color: $bg-color-2;
+        }
+    }
+
+    &.active {
+        margin-top: calc(2 * $padding-small + 50px);
+    }
+}
+
 .mainWrapper {
     align-items: center;
     justify-content: center;
@@ -362,7 +493,7 @@ input[type="text"], input[type="password"], textarea {
     display: flex;
     flex-direction: column;
     gap: $padding-normal;
-    margin-top: calc(2 * $padding-small + 50px + 2px)
+    margin-top: calc(2 * $padding-small + 50px)
 }
 
 
@@ -457,6 +588,20 @@ input[type="text"], input[type="password"], textarea {
 
 .sectionsContainer {
     justify-content: center
+}
+
+.Help {
+    position: relative;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 1000px;   
+
+    .gamesGrid {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        column-gap: $padding-x-small;
+        row-gap: $padding-x-small;
+    }
 }
 
 .Landing {
@@ -578,10 +723,32 @@ input[type="text"], input[type="password"], textarea {
         &:nth-child(2) {
             flex-direction: column;
         }
-
+        
         .media {
             width: 100%;
         }
+    }
+    
+    .Header {
+        .logo {
+            margin-top: auto;
+            margin-bottom: auto;
+        }
+
+        .menuBtnContainer {
+            display: block;
+        }
+
+        .items {
+            display: none;
+        }
+        
+        .gotoappButton {
+            display: none;
+        }
+    }
+    .sideBar {
+        display: block;
     }
     /*.Button .interior {
         transform: translate(0, 0);
@@ -601,10 +768,23 @@ input[type="text"], input[type="password"], textarea {
         &:nth-child(2) {
             flex-direction: column;
         }
-
+        
         .media {
             width: 100%;
         }
+    }
+    
+    .Header {
+        .menuBtnContainer {
+            display: block;
+        }
+
+        .items {
+            display: none;
+        }
+    }
+    .sideBar {
+        display: block;
     }
     /*.Button .interior {
         transform: translate(0, 0);
@@ -644,6 +824,11 @@ input[type="text"], input[type="password"], textarea {
         }
     }
 
+    .Help {
+        .gamesGrid {
+            grid-template-columns: repeat( auto-fit, minmax(250px, 1fr) )
+        }
+    }
     .screen {
         height: calc(100vh - 40px - 4 * $padding-small);
     }

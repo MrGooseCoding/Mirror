@@ -37,13 +37,42 @@ body {
   transform: translate(-50%, -50%);
 }
 
+.disable-outside-clicks {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 10;
+}
+
 .Modal {
   position: absolute;
+  background-color: white;
   padding: 1.7rem;
   border: 2px solid #ECE2D0;
   border-radius: 1rem;
   width: 40vw;
   max-width: 600px;
+}
+.Modal .top, .Modal .Header {
+  position: static;
+  display: flex;
+  margin-bottom: 10px;
+}
+.Modal .top .icon, .Modal .Header .icon {
+  position: relative;
+  height: 40px;
+  margin-top: auto;
+  margin-bottom: auto;
+  margin-left: auto;
+}
+.Modal.hidden {
+  opacity: 0;
+}
+.Modal.dominant {
+  z-index: 20;
+  box-shadow: 0px 0px 1px 5000px rgba(240, 240, 240, 0.605);
 }
 .Modal .slidesWrapper {
   overflow: hidden;
@@ -62,7 +91,47 @@ body {
   text-align: center;
   font-size: xx-large;
   font-weight: 800;
+  margin-bottom: 0;
+}
+
+.title {
+  width: 100%;
+  font-size: xx-large;
+  font-weight: 800;
   margin-bottom: 10px;
+}
+
+.Shrinkable .title {
+  margin-top: auto;
+  border-bottom: 2px solid #ECE2D0;
+  display: flex;
+}
+.Shrinkable .title div {
+  font-size: inherit;
+}
+.Shrinkable .title .icon {
+  margin-top: auto;
+  margin-bottom: auto;
+  height: 40px;
+  transform: rotate(90deg);
+  transition: 0.5s;
+}
+.Shrinkable .title .icon.shrinked {
+  transform: rotate(0);
+}
+.Shrinkable .content {
+  overflow: hidden;
+  max-height: 4000px;
+  padding-left: 40px;
+  padding-right: 40px;
+}
+.Shrinkable .content.shrinked {
+  max-height: 0;
+}
+.Shrinkable .Shrinkable .title {
+  font-family: "Poppins", sans-serif;
+  font-weight: 500;
+  font-size: large;
 }
 
 .screen {
@@ -244,7 +313,7 @@ input[type=text]::placeholder, input[type=password]::placeholder, textarea::plac
   gap: 1rem;
 }
 
-.top, .header {
+.top, .Header {
   z-index: 1;
   position: fixed;
   top: 0px;
@@ -257,28 +326,67 @@ input[type=text]::placeholder, input[type=password]::placeholder, textarea::plac
   bottom: 0px;
 }
 
-.header {
+.Header {
   background-color: white;
   width: calc(100vw - 2rem);
   max-width: calc(1000px - 2rem);
   padding: 1rem;
   display: flex;
   justify-content: space-between;
+  z-index: 3;
 }
-.header .items {
+.Header .logoContainer {
+  height: 50px;
+}
+.Header .menuBtnContainer {
+  display: none;
+  height: 50px;
+  width: 50px;
+}
+.Header .menuBtnContainer .menuBtn {
+  height: inherit;
+}
+.Header .items {
   margin-left: 90px;
   margin-right: 90px;
   width: calc(100vw - 180px);
   display: flex;
   justify-content: space-between;
 }
-.header .items .item {
+.Header .items .item {
   margin-top: auto;
   margin-bottom: auto;
 }
-.header .items .item:hover {
+.Header .items .item:hover {
   font-weight: 600;
   color: #a21c1c;
+}
+
+.sideBar {
+  display: none;
+  margin-top: -100vh;
+  top: 0;
+  left: 0;
+  background-color: white;
+  border-bottom-left-radius: 1rem;
+  border-bottom-right-radius: 1rem;
+  position: fixed;
+  width: calc(100vw - 2rem);
+  transition: 1s margin-top;
+  z-index: 2;
+  padding: 1rem;
+  flex-direction: column;
+  border: 2px solid #ECE2D0;
+}
+.sideBar .item {
+  padding: 1rem;
+  border-radius: 0.7rem;
+}
+.sideBar .item:hover {
+  background-color: #f0f0f0;
+}
+.sideBar.active {
+  margin-top: calc(2rem + 50px);
 }
 
 .mainWrapper {
@@ -294,7 +402,7 @@ input[type=text]::placeholder, input[type=password]::placeholder, textarea::plac
   display: flex;
   flex-direction: column;
   gap: 1.7rem;
-  margin-top: calc(2rem + 50px + 2px);
+  margin-top: calc(2rem + 50px);
 }
 
 .section, .mainSection {
@@ -377,6 +485,20 @@ input[type=text]::placeholder, input[type=password]::placeholder, textarea::plac
 
 .sectionsContainer {
   justify-content: center;
+}
+
+.Help {
+  position: relative;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 1000px;
+}
+.Help .gamesGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  -moz-column-gap: 0.7rem;
+       column-gap: 0.7rem;
+  row-gap: 0.7rem;
 }
 
 .Landing {
@@ -478,6 +600,22 @@ input[type=text]::placeholder, input[type=password]::placeholder, textarea::plac
   .section .media, .mainSection .media {
     width: 100%;
   }
+  .Header .logo {
+    margin-top: auto;
+    margin-bottom: auto;
+  }
+  .Header .menuBtnContainer {
+    display: block;
+  }
+  .Header .items {
+    display: none;
+  }
+  .Header .gotoappButton {
+    display: none;
+  }
+  .sideBar {
+    display: block;
+  }
   /*.Button .interior {
       transform: translate(0, 0);
   }*/
@@ -496,6 +634,15 @@ input[type=text]::placeholder, input[type=password]::placeholder, textarea::plac
   }
   .section .media, .mainSection .media {
     width: 100%;
+  }
+  .Header .menuBtnContainer {
+    display: block;
+  }
+  .Header .items {
+    display: none;
+  }
+  .sideBar {
+    display: block;
   }
   /*.Button .interior {
       transform: translate(0, 0);
@@ -524,6 +671,9 @@ input[type=text]::placeholder, input[type=password]::placeholder, textarea::plac
     padding-left: 0px;
     overflow: hidden;
     transition: 1s;
+  }
+  .Help .gamesGrid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   }
   .screen {
     height: calc(100vh - 40px - 4rem);
