@@ -3,8 +3,11 @@ import Logo from './../assets/icons/logo.svg?react'
 import Logowithname from './../assets/icons/logowithname.svg?react'
 import AddCircleFilled from './../assets/icons/add-circle-filled.svg?react'
 import AddCircleOutline from './../assets/icons/add-circle-outline.svg?react'
+import Arrow from './../assets/icons/arrow.svg?react'
+import Close from './../assets/icons/close.svg?react'
 import JoinFilled from './../assets/icons/join-filled.svg?react'
 import JoinOutline from './../assets/icons/join-outline.svg?react'
+import Menu from './../assets/icons/menu.svg?react'
 import PersonFilled from './../assets/icons/person-filled.svg?react'
 import PersonOutline from './../assets/icons/person-outline.svg?react'
 
@@ -18,10 +21,16 @@ function Icon({ name, color, className}) {
       return <AddCircleFilled className={`${className}`}/>
     case "add-circle-outline":
       return <AddCircleOutline className={`${className}`}/> 
+    case "arrow": 
+      return <Arrow className={`${className}`}/>
+    case "close":
+      return <Close className={`${className}`}/>
     case "join-filled":
       return <JoinFilled className={`${className}`}/>
     case "join-outline":
       return <JoinOutline className={`${className}`}/>
+    case "menu":
+      return <Menu className={`${className}`}/>
     case "person-filled": 
       return <PersonFilled className={`${className}`}/>
     case "person-outline":
