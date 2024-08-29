@@ -14,11 +14,13 @@ import Hows_yoursGame from './routes/app/room/game/hows_yours'
 import Profile from './routes/app/profile'
 import SignUp from './routes/signup';
 import Landing from './routes/landing';
+import Help from './routes/help';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" key='index'>
       <Route path="/" element={<Landing />} key={'landing'} />
+      <Route path="/help" element={<Help />} key={'help'} />
       <Route path="/login" element={<Login />} key={'login'} />
       <Route path="/signup" element={<SignUp />} key={'login'} />
       <Route path="/app" element={<App />} key={'app'} 
