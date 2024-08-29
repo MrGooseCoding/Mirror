@@ -45,4 +45,12 @@ async function room_canJoin(code, token) {
     })
 }
 
-export { user_getByToken, user_create, user_login, room_create, room_canJoin }
+async function help_game(game) {
+    return await fetchPOST(`http://localhost:3000/api/help/game/${game}/`)
+}
+
+async function help_getGames() {
+    return await fetchPOST(`http://localhost:3000/api/help/getGames/`)
+}
+
+export { user_getByToken, user_create, user_login, room_create, room_canJoin, help_game, help_getGames }
