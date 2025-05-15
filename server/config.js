@@ -1,6 +1,6 @@
 const config = {
     dbPath: 'database.db',
-    appName: 'NodeAuth',
+    appName: 'Mirror',
     port: 3000,
 
     validate_email: false, // Validate email address during registration and login
