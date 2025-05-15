@@ -1,7 +1,7 @@
 const assert = require('assert');
 
-const RoomMember = require('./../../../models/room_member')
-const Room = require('./../../../models/room')
+const RoomMember = require('../../../models/room_member')
+const Room = require('../../../models/room')
 
 const getConfig = game => {
     return {
