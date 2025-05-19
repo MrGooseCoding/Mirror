@@ -49,6 +49,7 @@ function SignUp() {
           <Input type="password" label="Password" placeholder="keepItSecret123" onChange={passwordCallback} error={errors["password"]}/>
           <Input type="textarea" label="Description" placeholder="Yo what's up?" onChange={descriptionCallback} error={errors["description"]}/>
           <Button text="Submit" color="red" onClick={submitCallback}/>
+          <div className='label margin'>Have an account already? <span className='link' onClick={() => window.location.replace("/login")}>Log in</span></div>
         </div>
       </Modal>
     </div>

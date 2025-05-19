@@ -48,6 +48,7 @@ function Login() {
           <Input type="password" label="Password" placeholder="keepItSecret123" onChange={passwordCallback} error={errors["password"]}/>
           <Button text="Submit" color="red" onClick={submitCallback}/>
         </div>
+        <div className='label margin'>Don't have an account already? Create one <span className='link' onClick={() => window.location.replace("/signup")}>here</span></div>
       </Modal>
     </div>
   )
