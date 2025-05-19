@@ -30,8 +30,8 @@ function Lobby({}) {
       return
     }
 
+    //const socket = new WebSocket(`wss://${window.location.host}/ws/room/?code=${code}&token=${token}`)
     const socket = new WebSocket(`ws://localhost:3000/ws/room/?code=${code}&token=${token}`)
-
     setWs(socket)
 
     // Event listener for when the connection is opened

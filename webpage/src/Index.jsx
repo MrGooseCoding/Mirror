@@ -15,14 +15,16 @@ import Profile from './routes/app/profile'
 import SignUp from './routes/signup';
 import Landing from './routes/landing';
 import Help from './routes/help';
+import About from './routes/about';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" key='index'>
       <Route path="/" element={<Landing />} key={'landing'} />
       <Route path="/help" element={<Help />} key={'help'} />
+      <Route path="/about" element={<About />} key={'about'} />
       <Route path="/login" element={<Login />} key={'login'} />
-      <Route path="/signup" element={<SignUp />} key={'login'} />
+      <Route path="/signup" element={<SignUp />} key={'signup'} />
       <Route path="/app" element={<App />} key={'app'} 
         children={[
           <Route path="/app/joinRoom/" element={<JoinRoom/>} key={'joinRoom'}/>,
