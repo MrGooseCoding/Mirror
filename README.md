@@ -2,7 +2,7 @@
 Mirror is a multiplayer, cross-device compatible minigames website that's modular so you can upload and code your own games easily.
 It's place to play online games with your friends. Create a room, invite people, and start playing!
 
-![Intuitive and Multiplayer](/webpage/src/assets/videos/IntuitiveFlow.mp4)
+![Intuitive and Multiplayer](/webpage/src/assets/videos/IntuitiveFlow.gif)
 
 ## Awards
 Mirror is officially the winner of the **First edition of Loyola's University Videogame Academy Awards**
