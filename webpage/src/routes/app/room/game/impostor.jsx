@@ -6,6 +6,8 @@ import Button from '../../../../components/button'
 //import { RoomWebsocket } from '../../server/ws'
 import { useOutletContext, useLocation, useNavigate } from "react-router-dom";
 
+import { help_game } from "../../../../server/api"
+
 function Impostor({}) {
   var [ ws, setWs ] = useState()
   var [ status, setStatus ] = useState("")
@@ -16,6 +18,7 @@ function Impostor({}) {
   var [ mostVoted, setMostVoted ] = useState("")
   var [ messages, setMessages ] = useState([])
   var [ resultMessages, setResultMessages ] = useState([])
+  var [ gameData, setGameData ] = useState({})
 
   var [ word, setWord ] = useState()
 
@@ -34,8 +37,16 @@ function Impostor({}) {
     if (!redirectionKey) {
       return
     }
+     
+    async function getHelp () {
+      const data = await help_game("impostor")
+      if (data[0]) {
+        setGameData(data[1])
+      }
+    }
 
-    //const socket = new WebSocket(`ws://${window.location.host}/ws/game/impostor/?key=${redirectionKey}`)
+    getHelp()
+    //const socket = new WebSocket(`wss://${window.location.host}/ws/game/impostor/?key=${redirectionKey}`)
     const socket = new WebSocket(`ws://localhost:3000/ws/game/impostor/?key=${redirectionKey}`)
 
     setWs(socket)
@@ -165,10 +176,29 @@ function Impostor({}) {
   };
 
   return (
-    <div>
+    <div className='gameContainer'>
       <div className={`screen ${status == "" ? 'active' : ''}`}>
-        <Modal>
-          Waiting for every member to join...
+
+        <Modal title="Impostor">
+            {
+              gameData.players && 
+                <div>
+                  <div className="label">Players</div>
+                  <div className="container grey">
+                    From {gameData.players.from} to {gameData.players.to} players
+                  </div>
+                </div>
+            }
+            {
+              gameData.description &&
+                <div>
+                  <div className="label">Description:</div>
+                  <div className='container grey'>{gameData.description}</div>
+                </div>
+            }
+            <div className='label margin'>
+              Waiting for every member to join...
+            </div>
         </Modal>
       </div>
 
@@ -260,6 +290,8 @@ function Impostor({}) {
             })
           }
           </div>
+
+          <div className='label margin'>Go back to <span className='link' onClick={()=> window.location.replace("/app")}>home</span></div>
         </div>
       </div>
 
