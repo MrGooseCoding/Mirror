@@ -10,6 +10,10 @@ body {
   margin: 0;
 }
 
+.link {
+  color: #bb2222;
+}
+
 .logo {
   color: #a21c1c;
   width: -moz-min-content;
@@ -219,6 +223,9 @@ body {
   padding-bottom: 0;
   padding-top: 0;
 }
+.label.margin {
+  margin-top: 1.7rem;
+}
 
 .error {
   color: #bb2222;
@@ -302,6 +309,8 @@ input[type=text]::placeholder, input[type=password]::placeholder, textarea::plac
 
 .messagesContainer {
   display: flex;
+  overflow-y: scroll;
+  max-height: 200px;
   flex-direction: column;
   gap: 1rem;
 }
@@ -487,6 +496,13 @@ input[type=text]::placeholder, input[type=password]::placeholder, textarea::plac
   justify-content: center;
 }
 
+.About {
+  position: relative;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 1000px;
+}
+
 .Help {
   position: relative;
   margin-left: auto;
@@ -650,7 +666,7 @@ input[type=text]::placeholder, input[type=password]::placeholder, textarea::plac
 }
 @media (max-width: 1000px) {
   .NavBar {
-    width: calc(100vw - 2rem);
+    width: calc(100vw - 1.4rem);
     border-top: 2px solid #ECE2D0;
     border-right: unset;
     flex-direction: row;
@@ -658,14 +674,22 @@ input[type=text]::placeholder, input[type=password]::placeholder, textarea::plac
     left: 0;
     top: unset;
     bottom: 0;
+    padding: 0.7rem;
     gap: 0px;
     justify-content: space-evenly;
   }
   .NavBar:hover {
-    width: calc(100vw - 2rem);
+    width: calc(100vw - 1.4rem);
+  }
+  .NavBar .item {
+    padding: 0.5rem;
   }
   .NavBar .item:hover {
     background-color: unset;
+  }
+  .NavBar .item .icon {
+    width: 30px;
+    height: 30px;
   }
   .NavBar:hover .item .name {
     padding-left: 0px;
@@ -676,7 +700,7 @@ input[type=text]::placeholder, input[type=password]::placeholder, textarea::plac
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   }
   .screen {
-    height: calc(100vh - 40px - 4rem);
+    height: calc(100vh - 30px - 1rem - 1.4rem);
   }
   .App {
     margin-left: 0px;

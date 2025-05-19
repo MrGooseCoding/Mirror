@@ -13,6 +13,7 @@ $color-2-darker: #a21c1c;
 $padding-normal: 1.7rem;
 $padding-small: 1rem;
 $padding-x-small: 0.7rem;
+$padding-xx-small: 0.5rem;
 
 $grid-gap-normal: 1rem;
 
@@ -31,6 +32,10 @@ $title-font-size: xx-large;
 body {
     padding: 0;
     margin: 0;
+}
+
+.link {
+    color: $color-2;
 }
 
 .logo {
@@ -285,6 +290,10 @@ body {
     padding: $padding-small;
     padding-bottom: 0;
     padding-top: 0;
+    
+    &.margin  {
+        margin-top: $padding-normal;
+    }
 }
 
 .error {
@@ -292,7 +301,7 @@ body {
     height: 0px;
     transition: 1s height;
     background-color: $color-2-light;
-    border-radius: $border-radius-small;
+    border-radius: $border-radius-small; 
     
     &.visible {
         border: 2px solid $color-2;
@@ -380,6 +389,8 @@ input[type="text"], input[type="password"], textarea {
     @extend .grey;
     
     display: flex;
+    overflow-y: scroll;
+    max-height: 200px;
     flex-direction: column;
     gap: $padding-small;
 
@@ -590,6 +601,13 @@ input[type="text"], input[type="password"], textarea {
     justify-content: center
 }
 
+.About {
+    position: relative;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 1000px;   
+}
+
 .Help {
     position: relative;
     margin-left: auto;
@@ -793,7 +811,7 @@ input[type="text"], input[type="password"], textarea {
 
 @media (max-width: 1000px) {
     .NavBar {
-        width: calc(100vw - 2*$padding-small);
+        width: calc(100vw - 2*$padding-x-small);
         border-top: 2px solid $border-color;
         
         border-right: unset;
@@ -802,17 +820,27 @@ input[type="text"], input[type="password"], textarea {
         left: 0;
         top: unset;
         bottom: 0;
-
+ 
+        padding: $padding-x-small;
+    
         gap: 0px;
         justify-content: space-evenly;
 
         &:hover {
-            width: calc(100vw - 2 * $padding-small);
+            width: calc(100vw - 2 * $padding-x-small);
         }
 
         .item {
+
+            padding: $padding-xx-small;
             &:hover {
                 background-color: unset;
+            }
+
+            .icon {
+                // color: $color-2;
+                width: 30px;
+                height: 30px;
             }
         }
         
@@ -830,7 +858,7 @@ input[type="text"], input[type="password"], textarea {
         }
     }
     .screen {
-        height: calc(100vh - 40px - 4 * $padding-small);
+        height: calc(100vh - 30px - 2 * $padding-xx-small - 2*$padding-x-small);
     }
 
     .App {
