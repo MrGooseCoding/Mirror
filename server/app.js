@@ -14,7 +14,7 @@ app.use(express.json())
 app.use('/api', api);
 
 app.use((req, res, next) => {
-  if (/(.ico|.js|.css|.jpg|.png|.map)$/i.test(req.path)) {
+  if (/(.ico|.js|.css|.jpg|.png|.map|.mp4)$/i.test(req.path)) {
       next();
   } else {
       res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
