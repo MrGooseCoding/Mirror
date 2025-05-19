@@ -139,7 +139,7 @@ wsRouter.ws('/impostor/', async (ws, u, model_params, parameters, roomStorage) =
                 data: first_turn.getAttr("user")
             })
 
-        }, 5000)
+        }, 30000)
     }
 
     ws.on("message", async (message) => {
